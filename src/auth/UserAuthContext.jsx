@@ -3,10 +3,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut
+  signOut,
 } from "firebase/auth";
-import { auth } from "../../firebaseConfig";
-
+import { getFirestore, doc, getDoc, addDoc } from "firebase/firestore";
+import { auth, db } from "../../firebaseConfig";
 const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
@@ -23,9 +23,37 @@ export function UserAuthContextProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentuser) => {
-      console.log("Auth", currentuser);
-      setUser(currentuser);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+     
+      setUser(currentUser);
+
+      if (currentUser) {
+        const uid = currentUser.uid;
+
+        const db = getFirestore();
+        const userRef = doc(db, "Usuario", uid);
+        getDoc(userRef)
+          .then((doc) => {
+            if (doc.exists()) {
+              const Tipo = doc.data().Tipo;
+              
+
+              const userData = {
+                user: currentUser,
+                Tipo: Tipo,
+              };
+              setUser(userData);
+           
+            } else {
+              console.log("User document does not exist");
+            }
+          })
+          .catch((error) => {
+            console.log("Error fetching user document:", error);
+          });
+      } else {
+        console.log("User is signed out");
+      }
     });
 
     return () => {
@@ -34,9 +62,7 @@ export function UserAuthContextProvider({ children }) {
   }, []);
 
   return (
-    <userAuthContext.Provider
-      value={{ user, logIn, signUp, logOut }}
-    >
+    <userAuthContext.Provider value={{ user, logIn, signUp, logOut }}>
       {children}
     </userAuthContext.Provider>
   );

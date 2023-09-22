@@ -22,22 +22,15 @@ import Inventario from "./components/Inventario/Inventario";
 
 import MostrarInventario from "./components/Inventario/mostrarInventario";
 import MostrarInventarioAD from "./components/Inventario/MostrarInventarioAD";
-
+import { useUserAuth } from "./auth/UserAuthContext";
 export const ColorContext = createContext();
 
 const { Header, Content, Footer } = Layout;
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-    });
+  const { user } = useUserAuth();
+ 
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -58,7 +51,9 @@ const App = () => {
           alignItems: "center",
         }}
       >
+        <UserAuthContextProvider>
         <Navbar user={user} />
+         </UserAuthContextProvider>
       </Header>
       <Content
         className="site-layout"

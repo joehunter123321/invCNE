@@ -15,35 +15,5 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-auth.onAuthStateChanged((user, userData) => {
-  if (user) {
-    const uid = user.uid;
-
-    const db = getFirestore();
-    const userRef = doc(db, "Usuario", uid);
-
-    getDoc(userRef)
-      .then((doc) => {
-        if (doc.exists()) {
-          const Tipo = doc.data().Tipo;
-          console.log("Tipo:", Tipo);
-
-          const userData = {
-            user: user,
-            Tipo: Tipo,
-          };
-
-          console.log("Combined data:", userData);
-        } else {
-          console.log("User document does not exist");
-        }
-      })
-      .catch((error) => {
-        console.log("Error fetching user document:", error);
-      });
-  } else {
-    console.log("User is signed out");
-  }
-});
 
 export { db, auth };

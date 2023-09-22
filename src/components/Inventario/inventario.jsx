@@ -8,6 +8,7 @@ const { Panel } = Collapse;
 
 function Inventario() {
   const { user } = useUserAuth();
+
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
