@@ -29,13 +29,13 @@ const { Header, Content, Footer } = Layout;
 
 const App = () => {
   const { user } = useUserAuth();
- 
-
+  const { loading } = useUserAuth();
+  const { userTipo } = useUserAuth();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const [loading, setLoading] = useState(true);
+  console.log("Loading", loading);
 
   ////////////////////////////////
 
@@ -52,8 +52,8 @@ const App = () => {
         }}
       >
         <UserAuthContextProvider>
-        <Navbar user={user} />
-         </UserAuthContextProvider>
+          <Navbar user={user} loading={loading} userTipo={userTipo} />
+        </UserAuthContextProvider>
       </Header>
       <Content
         className="site-layout"
@@ -75,7 +75,7 @@ const App = () => {
                   path="/Inventario"
                   element={
                     <ProtectedRoute>
-                      <Inventario user={user} />
+                      <Inventario user={user} loading={loading} userTipo={userTipo}  />
                     </ProtectedRoute>
                   }
                 />
@@ -83,7 +83,7 @@ const App = () => {
                   path="/MostrarInventario"
                   element={
                     <ProtectedRoute>
-                      <MostrarInventario user={user} />
+                      <MostrarInventario user={user} loading={loading} userTipo={userTipo}  />
                     </ProtectedRoute>
                   }
                 />
@@ -91,13 +91,12 @@ const App = () => {
                   path="/MostrarInventarioAD"
                   element={
                     <ProtectedRoute>
-                      <MostrarInventarioAD user={user} />
+                      <MostrarInventarioAD user={user} loading={loading} userTipo={userTipo} />
                     </ProtectedRoute>
                   }
                 />
 
                 <Route path="/" element={<Login />} />
-                
               </Routes>
             </BrowserRouter>
           </UserAuthContextProvider>

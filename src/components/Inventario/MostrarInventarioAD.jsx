@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import { Table, Input, Button, Select, Popconfirm } from "antd";
-import { getFirestore, collection, getDocs , doc, deleteDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 import { useUserAuth } from "../../auth/UserAuthContext";
 import CsvDownloader from "react-csv-downloader";
 const { Option } = Select;
 
-function MostrarInventarioAD() {
-  const { user } = useUserAuth();
+function MostrarInventarioAD({ user, loading, userTipo })  {
+
   const [searchValue, setSearchValue] = useState("");
   const [filterBy, setFilterBy] = useState("IDscanner");
   const [data, setData] = useState([]);
@@ -31,7 +37,6 @@ function MostrarInventarioAD() {
       console.error("Error fetching elements:", error);
     }
   };
-
 
   const handleDelete = async (id) => {
     console.log("Deleting)", id);
@@ -81,37 +86,45 @@ function MostrarInventarioAD() {
   ];
 
   return (
-    <div>
-      <Input
-        value={searchValue}
-        onChange={handleSearchChange}
-        placeholder="Enter search value"
-      />
-      <Select value={filterBy} onChange={handleFilterChange}>
-        <Option value="IDscanner">IDscanner</Option>
-        <Option value="Correo">Correo</Option>
-      </Select>
-      <Button type="primary" onClick={handleSearch}>
-        Search
-      </Button>
-      <Table
-        rowKey={(record) => record.IDscanner}
-        dataSource={data}
-        columns={columns}
-      />
 
-      <CsvDownloader
-        filename="myfile"
-        extension=".csv"
-        separator=";"
-        wrapColumnChar="'"
-        columns={columns2}
-        datas={data}
-        text="DOWNLOAD"
-      />
+    
+    <div>
+      {!user ? (
+  null
+) : (
+  !loading && user ? (
+   <div><Input
+   value={searchValue}
+   onChange={handleSearchChange}
+   placeholder="Enter search value"
+ />
+ <Select value={filterBy} onChange={handleFilterChange}>
+   <Option value="IDscanner">IDscanner</Option>
+   <Option value="Correo">Correo</Option>
+ </Select>
+ <Button type="primary" onClick={handleSearch}>
+   Search
+ </Button>
+ <Table
+   rowKey={(record) => record.IDscanner}
+   dataSource={data}
+   columns={columns}
+ />
+
+ <CsvDownloader
+   filename="myfile"
+   extension=".csv"
+   separator=";"
+   wrapColumnChar="'"
+   columns={columns2}
+   datas={data}
+   text="DOWNLOAD"
+ /></div>
+  ) : null
+)}
+      
     </div>
   );
 }
 
 export default MostrarInventarioAD;
-

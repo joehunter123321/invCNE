@@ -11,6 +11,8 @@ const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState({});
+   const [loading, setLoading] = useState(true);
+   const [userTipo, setUserTipo] = useState(null);
 
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
@@ -24,7 +26,6 @@ export function UserAuthContextProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-     
       setUser(currentUser);
 
       if (currentUser) {
@@ -36,14 +37,14 @@ export function UserAuthContextProvider({ children }) {
           .then((doc) => {
             if (doc.exists()) {
               const Tipo = doc.data().Tipo;
-              
 
               const userData = {
                 user: currentUser,
                 Tipo: Tipo,
               };
               setUser(userData);
-           
+              setLoading(false); 
+              setUserTipo(Tipo); 
             } else {
               console.log("User document does not exist");
             }
@@ -62,7 +63,7 @@ export function UserAuthContextProvider({ children }) {
   }, []);
 
   return (
-    <userAuthContext.Provider value={{ user, logIn, signUp, logOut }}>
+    <userAuthContext.Provider value={{ user, logIn, signUp, logOut ,loading,userTipo}}>
       {children}
     </userAuthContext.Provider>
   );

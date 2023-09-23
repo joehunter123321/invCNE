@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Bars3BottomRightIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { getAuth, signOut } from "firebase/auth";
 import Logo from "../../assets/images/logo.jpg";
-import { Button } from "antd";
-const Navbar = (user) => {
+import { Button, Spin } from "antd";
+const Navbar = ({ user, loading, userTipo }) => {
+  console.log("navbaruserTipo", userTipo);
   const handleLogout = () => {
     const auth = getAuth();
     signOut(auth)
@@ -18,11 +19,22 @@ const Navbar = (user) => {
 
   let Links = [
     { key: "1", name: "INICIO", link: "/" },
-
     { key: "2", name: "X1", link: "/Inventario" },
     { key: "3", name: "X2", link: "/MostrarInventario" },
     { key: "4", name: "X3", link: "/MostrarInventarioAD" },
   ];
+
+  Links = Links.filter(
+    (link) =>
+      link.link !== "/MostrarInventarioAD" ||
+      (link.link === "/MostrarInventarioAD" &&
+        loading === false &&
+        userTipo === "Admin")
+  );
+  if (!user) {
+    Links = [{ key: "1", name: "INICIO", link: "/" }];
+  }
+
   let [open, setOpen] = useState(false);
 
   return (
@@ -43,24 +55,67 @@ const Navbar = (user) => {
           >
             {open ? <XMarkIcon /> : <Bars3BottomRightIcon />}
           </div>
-          {/* linke items */}
-          <ul
-            className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${
-              open ? "top-12" : "top-[-490px]"
-            }`}
-          >
-            {Links.map((link) => (
-              <li key={link.key} className="md:ml-8 md:my-0 my-7 font-semibold">
-                <a
-                  href={link.link}
-                  className="text-gray-800 hover:text-blue-400 duration-500"
-                >
-                  {link.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <Button onClick={handleLogout}>Logout</Button>
+
+          <div>
+            {!user ? (
+              <ul
+                className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${
+                  open ? "top-12" : "top-[-490px]"
+                }`}
+              >
+                {Links.map((link) => (
+                  <li
+                    key={link.key}
+                    className="md:ml-8 md:my-0 my-7 font-semibold"
+                  >
+                    <a
+                      href={link.link}
+                      className="text-gray-800 hover:text-blue-400 duration-500"
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+                
+              </ul>
+            ) : !loading && user ? (
+              <ul
+                className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${
+                  open ? "top-12" : "top-[-490px]"
+                }`}
+              >
+                {Links.map((link) => (
+                  <li
+                    key={link.key}
+                    className="md:ml-8 md:my-0 my-7 font-semibold"
+                  >
+                    <a
+                      href={link.link}
+                      className="text-gray-800 hover:text-blue-400 duration-500"
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+                <div>
+                  {user ? (
+                    <Button
+                      style={{
+                        marginLeft: "20px",
+                        backgroundColor: "blue",
+                        color: "white",
+                      }}
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Button>
+                  ) : null}
+                </div>
+              </ul>
+            ) : <Spin size="large" />}
+
+            {/* linke items */}
+          </div>
         </div>
       </div>
     </div>
