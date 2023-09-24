@@ -3,25 +3,28 @@ import { Collapse, Form, Input, Button } from "antd";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import { useUserAuth } from "../../auth/UserAuthContext";
+import BarcodeScanner from "../Login/BarcodeScanner";
 
 const { Panel } = Collapse;
 
-function Inventario() {
-  const { user } = useUserAuth();
-
+function Inventario(user) {
+ 
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const handleSubmit = async (values, formId, formRef) => {
+    console.log("Inventario", user.user.user.email);
     try {
       const db = getFirestore();
       const id = values.IDscanner;
-      const Correo = user.email;
+
       const documentRef = doc(collection(db, "InventarioCompleto"), id);
       values.Categoria = formId;
-      values.Correo = user.email;
+      values.InventariadoPorUserEmail = user.user.user.email;
+      values.InventariadoPorUserIDentidad = user.user.Identidad;
+      values.Estado = "Stock";
       await setDoc(documentRef, values);
       console.log("Document written with ID:", documentRef.id);
       formRef?.current?.resetFields(); // Check if formRef exists before resetting fields
@@ -40,12 +43,27 @@ function Inventario() {
   const form1Fields = [
     {
       name: "IDscanner",
-      label: "IDscanner",
+      label: "ID",
       rules: [{ required: true, message: "IDscanner is required" }],
     },
     {
-      name: "field1",
-      label: "Field 1",
+      name: "Procesador",
+      label: "Procesador",
+      rules: [{ required: true, message: "Field 1 is required" }],
+    },
+    {
+      name: "Pantalla",
+      label: "Pantalla",
+      rules: [{ required: true, message: "Field 1 is required" }],
+    },
+    {
+      name: "TipoAlmacenamiento",
+      label: "Tipo Almacenamiento",
+      rules: [{ required: true, message: "Field 1 is required" }],
+    },
+    {
+      name: "CapacidadAlmacenamiento",
+      label: "Capacidad Almacenamiento",
       rules: [{ required: true, message: "Field 1 is required" }],
     },
     // Add more fields for form1
@@ -80,18 +98,18 @@ function Inventario() {
 
   const filteredFormPanels = [
     {
-      id: "Categoria1",
-      title: "Categoria1 1",
+      id: "Electronica",
+      title: "Electronica",
       formPanels: [
         {
-          id: "Panel1",
-          title: "Panel 1",
+          id: "Computadoras",
+          title: "Computadoras",
           fields: form1Fields,
           formRef: form1Ref,
         },
         {
-          id: "Panel2",
-          title: "Panel 2",
+          id: "TV",
+          title: "TV",
           fields: form2Fields,
           formRef: form2Ref,
         },
@@ -121,6 +139,7 @@ function Inventario() {
 
   return (
     <div style={{ padding: "10%" }}>
+      <BarcodeScanner/>
       <Input
         value={searchTerm}
         onChange={handleSearch}

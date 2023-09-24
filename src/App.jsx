@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
-
+import { Menu } from "antd";
+import { Link } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import "./index.css";
 
@@ -23,6 +24,9 @@ import Inventario from "./components/Inventario/Inventario";
 import MostrarInventario from "./components/Inventario/mostrarInventario";
 import MostrarInventarioAD from "./components/Inventario/MostrarInventarioAD";
 import { useUserAuth } from "./auth/UserAuthContext";
+import BarcodeScanner from "./components/Login/BarcodeScanner";
+import AsignarInventario from "./components/Inventario/AsignarInventario";
+import TestNav from "./components/Navbar/TestNav";
 export const ColorContext = createContext();
 
 const { Header, Content, Footer } = Layout;
@@ -54,6 +58,9 @@ const App = () => {
         <UserAuthContextProvider>
           <Navbar user={user} loading={loading} userTipo={userTipo} />
         </UserAuthContextProvider>
+     
+          
+      
       </Header>
       <Content
         className="site-layout"
@@ -75,7 +82,11 @@ const App = () => {
                   path="/Inventario"
                   element={
                     <ProtectedRoute>
-                      <Inventario user={user} loading={loading} userTipo={userTipo}  />
+                      <Inventario
+                        user={user}
+                        loading={loading}
+                        userTipo={userTipo}
+                      />
                     </ProtectedRoute>
                   }
                 />
@@ -83,7 +94,11 @@ const App = () => {
                   path="/MostrarInventario"
                   element={
                     <ProtectedRoute>
-                      <MostrarInventario user={user} loading={loading} userTipo={userTipo}  />
+                      <MostrarInventario
+                        user={user}
+                        loading={loading}
+                        userTipo={userTipo}
+                      />
                     </ProtectedRoute>
                   }
                 />
@@ -91,7 +106,23 @@ const App = () => {
                   path="/MostrarInventarioAD"
                   element={
                     <ProtectedRoute>
-                      <MostrarInventarioAD user={user} loading={loading} userTipo={userTipo} />
+                      <MostrarInventarioAD
+                        user={user}
+                        loading={loading}
+                        userTipo={userTipo}
+                      />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/AsignarInventario"
+                  element={
+                    <ProtectedRoute>
+                      <AsignarInventario
+                        user={user}
+                        loading={loading}
+                        userTipo={userTipo}
+                      />
                     </ProtectedRoute>
                   }
                 />

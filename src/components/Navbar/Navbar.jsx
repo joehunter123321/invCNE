@@ -19,9 +19,10 @@ const Navbar = ({ user, loading, userTipo }) => {
 
   let Links = [
     { key: "1", name: "INICIO", link: "/" },
-    { key: "2", name: "X1", link: "/Inventario" },
-    { key: "3", name: "X2", link: "/MostrarInventario" },
-    { key: "4", name: "X3", link: "/MostrarInventarioAD" },
+    { key: "2", name: "Agregar ", link: "/Inventario" },
+    { key: "3", name: "Buscar", link: "/MostrarInventario" },
+    { key: "4", name: "Elimnar ", link: "/MostrarInventarioAD" },
+    { key: "5", name: "Asignar ", link: "/AsignarInventario" },
   ];
 
   Links = Links.filter(
@@ -76,7 +77,6 @@ const Navbar = ({ user, loading, userTipo }) => {
                     </a>
                   </li>
                 ))}
-                
               </ul>
             ) : !loading && user ? (
               <ul
@@ -112,7 +112,9 @@ const Navbar = ({ user, loading, userTipo }) => {
                   ) : null}
                 </div>
               </ul>
-            ) : <Spin size="large" />}
+            ) : (
+              <Spin size="large" />
+            )}
 
             {/* linke items */}
           </div>

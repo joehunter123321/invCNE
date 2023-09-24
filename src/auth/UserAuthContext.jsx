@@ -13,6 +13,7 @@ export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState({});
    const [loading, setLoading] = useState(true);
    const [userTipo, setUserTipo] = useState(null);
+   const [userIdentidad, setIuserIdentidad] = useState(null);
 
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
@@ -37,14 +38,16 @@ export function UserAuthContextProvider({ children }) {
           .then((doc) => {
             if (doc.exists()) {
               const Tipo = doc.data().Tipo;
-
+              const Identidad=doc.data().Identidad;
               const userData = {
                 user: currentUser,
                 Tipo: Tipo,
+                Identidad: Identidad
               };
               setUser(userData);
               setLoading(false); 
               setUserTipo(Tipo); 
+              setIuserIdentidad(userIdentidad);  
             } else {
               console.log("User document does not exist");
             }
@@ -63,7 +66,7 @@ export function UserAuthContextProvider({ children }) {
   }, []);
 
   return (
-    <userAuthContext.Provider value={{ user, logIn, signUp, logOut ,loading,userTipo}}>
+    <userAuthContext.Provider value={{ user, logIn, signUp, logOut ,loading,userTipo,userIdentidad}}>
       {children}
     </userAuthContext.Provider>
   );
