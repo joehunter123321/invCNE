@@ -2,7 +2,7 @@
 body {
   font-size: 16px;
   line-height: 1.6;
-  color: #333;
+ 
   overflow-x: hidden;
   
 }
@@ -15,11 +15,16 @@ body {
 }
 
 .ant-layout-footer {
-  background: #111 !important;
+
   color: #fff !important;
   padding: 0px 0 !important;
   text-align: center;
 }
 
+.ant-layout-header{
 
-
+  color: blue !important;
+  padding: 0px 0 !important;
+  text-align: center;
+}
+ 

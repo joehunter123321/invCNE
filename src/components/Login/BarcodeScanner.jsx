@@ -1,105 +1,96 @@
 import React, { useRef, useEffect, useState } from "react";
 import Quagga from "quagga";
-import { Button, Input } from "antd";
+import { Button } from "antd";
 
-const BarcodeScanner = () => {
-  const videoRef = useRef(null);
-  const [scannedData, setScannedData] = useState("");
-  const [showVideo, setShowVideo] = useState(false);
-  const [cancelScan, setCancelScan] = useState(false);
+const BarcodeScanner = React.forwardRef((props, ref) => {
+ 
+  
+  const firstUpdate = useRef(true);
+  const [isStart, setIsStart] = useState(false);
 
-  const handleScan = (result) => {
-    const { codeResult } = result;
+  useEffect(() => {
+    return () => {
+      if (isStart) stopScanner();
+    };
+  }, [isStart]);
+
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+    } else {
+      if (isStart) startScanner();
+      else stopScanner();
+    }
+  }, [isStart]);
+
+  const _onDetected = (res) => {
+    stopScanner();
+    setIsStart(prevStart => !prevStart);
+    const { codeResult } = res;
     if (codeResult && codeResult.code) {
-     
-      setScannedData(codeResult.code);
-      setShowVideo(false);
-    setCancelScan(false);
+      props.handleCallback(codeResult.code);
     }
   };
 
-
-  const handleScanButton = () => {
-    setShowVideo(true);
-    setCancelScan(true);
-    navigator.mediaDevices
-      .getUserMedia({
-        video: { facingMode: "environment" },
-      })
-      .then((stream) => {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-        const constraints = {
-          width: videoRef.current.videoWidth,
-          height: videoRef.current.videoHeight,
-        };
-        Quagga.init(
-          {
-            inputStream: {
-              name: "Live",
-              type: "LiveStream",
-              constraints,
-              target: videoRef.current,
-            },
-            decoder: {
-              readers: ["ean_reader"],
-            },
-            locate: true,
-            locator: {
-              patchSize: "medium",
-              halfSample: true,
-            },
+  const xx = (res) => {
+   
+    setIsStart(prevStart => !prevStart);
+ 
+  };
+  const startScanner = () => {
+    Quagga.init(
+      {
+        inputStream: {
+          type: "LiveStream",
+          target: document.querySelector("#scanner-container"),
+          constraints: {
+            facingMode: "environment",
           },
-          (err) => {
-            if (err) {
-              console.error("Error initializing Quagga:", err);
-              return;
-            }
-            Quagga.start();
-          }
-        );
-
-        Quagga.onDetected(handleScan);
-      })
-      .catch((err) => {
-        console.error("Error accessing camera:", err);
-      });
+        },
+        decoder: {
+          readers: ["ean_reader"],
+        },
+        locate: true,
+        locator: {
+          patchSize: "medium",
+          halfSample: true,
+        },
+      },
+      (err) => {
+        if (err) {
+          return console.log(err);
+        }
+        Quagga.start();
+      }
+    );
+    Quagga.onDetected(_onDetected);
   };
 
-  const handleCancelScan = () => {
-    setShowVideo(false);
-    setCancelScan(false);
+  const stopScanner = () => {
+    Quagga.offProcessed();
+    Quagga.offDetected();
     Quagga.stop();
   };
 
-  useEffect(
-    () => () => {
-      Quagga.stop();
-    },
-    []
-  );
+   // Expose the start function through the ref
+   React.useImperativeHandle(ref, () => ({
+    start: xx,
+  }));
+
 
   return (
     <div>
-      {showVideo && (
-        <video
-          ref={videoRef}
-          style={{ width: "100%", height: "auto", objectFit: "cover" }}
-        />
+      <Button
+        onClick={() => setIsStart(prevStart => !prevStart)}
+        style={{ marginBottom: 20 }}
+      >
+        {isStart ? "Stop" : "Start"}
+      </Button>
+      {isStart && (
+        <div id="scanner-container"></div>
       )}
-      {showVideo && (
-        <Button onClick={handleCancelScan} style={{ marginTop: "10px" }}>
-          Cancel Scan
-        </Button>
-      )}
-      {!showVideo && (
-        <Button onClick={handleScanButton} disabled={cancelScan}>
-          Start Barcode Scanner
-        </Button>
-      )}
-      <Input value={scannedData}  />
     </div>
   );
-};
+});
 
 export default BarcodeScanner;

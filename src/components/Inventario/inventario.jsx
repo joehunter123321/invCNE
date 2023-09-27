@@ -8,7 +8,6 @@ import BarcodeScanner from "../Login/BarcodeScanner";
 const { Panel } = Collapse;
 
 function Inventario(user) {
- 
   const [searchTerm, setSearchTerm] = useState("");
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -139,7 +138,7 @@ function Inventario(user) {
 
   return (
     <div style={{ padding: "10%" }}>
-      <BarcodeScanner/>
+     
       <Input
         value={searchTerm}
         onChange={handleSearch}

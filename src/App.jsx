@@ -1,6 +1,5 @@
 import React, { useState, useEffect, createContext } from "react";
-import { Menu } from "antd";
-import { Link } from "react-router-dom";
+
 import Navbar from "./components/Navbar/Navbar";
 import "./index.css";
 
@@ -24,7 +23,7 @@ import Inventario from "./components/Inventario/Inventario";
 import MostrarInventario from "./components/Inventario/mostrarInventario";
 import MostrarInventarioAD from "./components/Inventario/MostrarInventarioAD";
 import { useUserAuth } from "./auth/UserAuthContext";
-import BarcodeScanner from "./components/Login/BarcodeScanner";
+
 import AsignarInventario from "./components/Inventario/AsignarInventario";
 import TestNav from "./components/Navbar/TestNav";
 export const ColorContext = createContext();
@@ -45,6 +44,7 @@ const App = () => {
 
   return (
     <Layout>
+      {/* 
       <Header
         style={{
           position: "sticky",
@@ -57,18 +57,12 @@ const App = () => {
       >
         <UserAuthContextProvider>
           <Navbar user={user} loading={loading} userTipo={userTipo} />
-        </UserAuthContextProvider>
-     
           
-      
+        </UserAuthContextProvider>
+        
       </Header>
-      <Content
-        className="site-layout"
-        style={{
-          paddingTop: "10px",
-          paddingBottom: "108px",
-        }}
-      >
+      */}
+      <Content className="site-layout">
         <div
           style={{
             minHeight: 380,
@@ -77,6 +71,7 @@ const App = () => {
         >
           <UserAuthContextProvider>
             <BrowserRouter>
+              <TestNav user={user} loading={loading} userTipo={userTipo} />
               <Routes>
                 <Route
                   path="/Inventario"

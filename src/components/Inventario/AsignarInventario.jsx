@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useRef } from "react";
 import { Table, Input, Button, Select, Modal, Form } from "antd";
 import {
   getFirestore,
@@ -10,9 +10,16 @@ import {
 } from "firebase/firestore";
 
 import CsvDownloader from "react-csv-downloader";
+import BarcodeScanner from "../Login/BarcodeScanner";
 const { Option } = Select;
 
-function AsignarInventario({ user, loading, userTipo }) {
+function AsignarInventario({ user, loading, userTipo, childData }) {
+  const childRef = useRef(null);
+  const executeChildFunction = () => {
+    if (childRef.current) {
+      childRef.current.start();
+    }
+  };
   console.log("Asignar Inventario", user.Identidad);
   const [searchValue, setSearchValue] = useState("");
   const [filterBy, setFilterBy] = useState("IDscanner");
@@ -52,8 +59,7 @@ function AsignarInventario({ user, loading, userTipo }) {
     }
   };
 
-  const handleUpdate = async (id,newData) => {
-   
+  const handleUpdate = async (id, newData) => {
     console.log("Updating document", id, "with data", newData);
     try {
       const db = getFirestore();
@@ -136,8 +142,13 @@ function AsignarInventario({ user, loading, userTipo }) {
     },
   ];
 
+  function CallBack(childData) {
+    setSearchValue(childData);
+  }
   return (
     <div>
+      <BarcodeScanner ref={childRef} handleCallback={CallBack} />
+      <button onClick={executeChildFunction}>Ejecutar Función del Hijo</button>
       {!user ? null : !loading && user ? (
         <div>
           <Input
