@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
-import { Collapse, Form, Input, Button } from "antd";
-import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { Collapse, Form, Input, Button, message } from "antd";
+import { collection, addDoc, setDoc, doc, getDoc } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import { useUserAuth } from "../../auth/UserAuthContext";
 import BarcodeScanner from "../Login/BarcodeScanner";
@@ -15,22 +15,35 @@ function Inventario(user) {
 
   const handleSubmit = async (values, formId, formRef) => {
     console.log("Inventario", user.user.user.email);
+
     try {
       const db = getFirestore();
       const id = values.IDscanner;
+      const subCategoria = formRef.current.__INTERNAL__.name;
+      const documentRef = doc(collection(db, `Inventario`), id);
 
-      const documentRef = doc(collection(db, "InventarioCompleto"), id);
+      // Verificar si el documento existe
+      const documentSnapshot = await getDoc(documentRef);
+      if (documentSnapshot.exists()) {
+        message.error("El documento con la ID especificada ya existe");
+        return; // Retorna sin crear el documento
+      }
+      values.subCategoria = subCategoria;
       values.Categoria = formId;
       values.InventariadoPorUserEmail = user.user.user.email;
       values.InventariadoPorUserIDentidad = user.user.Identidad;
       values.Estado = "Stock";
+
       await setDoc(documentRef, values);
       console.log("Document written with ID:", documentRef.id);
-      formRef?.current?.resetFields(); // Check if formRef exists before resetting fields
+
+      formRef?.current?.resetFields(); // Verificar si formRef existe antes de restablecer los campos
     } catch (error) {
       console.error("Error adding document:", error);
     }
   };
+
+
 
   const form1Ref = useRef(null);
   const form2Ref = useRef(null);
@@ -70,14 +83,26 @@ function Inventario(user) {
 
   const form2Fields = [
     {
+      name: "IDscanner",
+      label: "ID",
+      rules: [{ required: true, message: "IDscanner is required" }],
+    },
+    {
       name: "field2",
       label: "Field 2",
       rules: [{ required: true, message: "Field 2 is required" }],
     },
+
     // Add more fields for form2
   ];
 
   const form3Fields = [
+    {
+      name: "IDscanner",
+      label: "ID",
+      rules: [{ required: true, message: "IDscanner is required" }],
+    },
+
     {
       name: "field3",
       label: "Field 3",
@@ -87,6 +112,11 @@ function Inventario(user) {
   ];
 
   const form4Fields = [
+    {
+      name: "IDscanner",
+      label: "ID",
+      rules: [{ required: true, message: "IDscanner is required" }],
+    },
     {
       name: "field4",
       label: "Field 4",
@@ -105,6 +135,7 @@ function Inventario(user) {
           title: "Computadoras",
           fields: form1Fields,
           formRef: form1Ref,
+          padre: "tab1",
         },
         {
           id: "TV",
@@ -115,18 +146,18 @@ function Inventario(user) {
       ],
     },
     {
-      id: "Categoria2",
-      title: "Categoria2 2",
+      id: "Movi",
+      title: "Movi",
       formPanels: [
         {
-          id: "Panel3",
-          title: "Panel 3",
+          id: "Autos",
+          title: "Autos",
           fields: form3Fields,
           formRef: form3Ref,
         },
         {
-          id: "Panel4",
-          title: "Panel 4",
+          id: "Motos",
+          title: "Motos",
           fields: form4Fields,
           formRef: form4Ref,
         },
@@ -138,11 +169,11 @@ function Inventario(user) {
 
   return (
     <div style={{ padding: "10%" }}>
-     
+      <h1> Inventario </h1>
       <Input
         value={searchTerm}
         onChange={handleSearch}
-        placeholder="Enter panel name"
+        placeholder="Filtrar Categorias"
       />
 
       <Collapse accordion>
@@ -155,7 +186,12 @@ function Inventario(user) {
                     ref={formPanel.formRef}
                     name={formPanel.id}
                     onFinish={(values) =>
-                      handleSubmit(values, form.id, formPanel.formRef)
+                      handleSubmit(
+                        values,
+                        form.id,
+                        formPanel.formRef,
+                        formPanel.title
+                      )
                     }
                   >
                     {formPanel.fields.map((field) => (

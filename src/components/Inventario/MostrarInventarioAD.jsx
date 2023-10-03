@@ -27,7 +27,7 @@ function MostrarInventarioAD({ user, loading, userTipo }) {
   const handleSearch = async () => {
     try {
       const db = getFirestore();
-      const querySnapshot = await getDocs(collection(db, "InventarioCompleto"));
+      const querySnapshot = await getDocs(collection(db, "Inventario"));
       const filteredData = querySnapshot.docs
         .filter((doc) => doc.data()[filterBy] === searchValue)
         .map((doc) => doc.data());
@@ -41,7 +41,7 @@ function MostrarInventarioAD({ user, loading, userTipo }) {
     console.log("Deleting)", id);
     try {
       const db = getFirestore();
-      const documentRef = doc(collection(db, "InventarioCompleto"), id);
+      const documentRef = doc(collection(db, "Inventario"), id);
       await deleteDoc(documentRef);
       setData((prevData) => prevData.filter((item) => item.IDscanner !== id));
     } catch (error) {

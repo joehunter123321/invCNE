@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, createContext } from "react";
 import { Table, Input, Button, Select } from "antd";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
@@ -24,17 +22,10 @@ function MostrarInventario() {
   const handleSearch = async () => {
     try {
       const db = getFirestore();
-      const querySnapshot = await getDocs(collection(db, "InventarioCompleto"));
-      
-      let filteredData = [];
-      if (searchValue) {
-        filteredData = querySnapshot.docs
-          .filter((doc) => doc.data()[filterBy] === searchValue)
-          .map((doc) => doc.data());
-      } else {
-        filteredData = querySnapshot.docs.map((doc) => doc.data());
-      }
-  
+      const querySnapshot = await getDocs(collection(db, "Inventario"));
+      const filteredData = querySnapshot.docs
+        .filter((doc) => doc.data()[filterBy] === searchValue)
+        .map((doc) => doc.data());
       setData(filteredData);
     } catch (error) {
       console.error("Error fetching elements:", error);
@@ -44,7 +35,9 @@ function MostrarInventario() {
   const columns = [
     { title: "IDscanner", dataIndex: "IDscanner", key: "IDscanner" },
     { title: "Categoria", dataIndex: "Categoria", key: "Categoria" },
-    { title: "field1", dataIndex: "field1", key: "field1" },
+    { title: "Estado", dataIndex: "Estado", key: "Estado" },
+    { title: "Inventariado Por", dataIndex: "InventariadoPorUserIDentidad", key: "InventariadoPorUserIDentidad" },
+   
   ];
   const columns2 = [
     {
@@ -63,14 +56,17 @@ function MostrarInventario() {
 
   return (
     <div>
+      <h1> MostrarInventario </h1>
       <Input
         value={searchValue}
         onChange={handleSearchChange}
         placeholder="Enter search value"
       />
       <Select value={filterBy} onChange={handleFilterChange}>
-        <Option value="IDscanner">IDscanner</Option>
-        <Option value="Correo">Correo</Option>
+        <Option value="IDscanner">ID Scanner</Option>
+        <Option value="InventariadoPorUserEmail">Correo</Option>
+        <Option value="Categoria">Categoria</Option>
+        <Option value="Estado">Estado</Option>
       </Select>
       <Button onClick={handleSearch}>Search</Button>
 
@@ -80,7 +76,7 @@ function MostrarInventario() {
         rowKey={(record) => record.IDscanner}
       />
 
-<CsvDownloader
+      <CsvDownloader
         filename="myfile"
         extension=".csv"
         separator=";"
