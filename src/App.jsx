@@ -62,10 +62,16 @@ const App = () => {
         
       </Header>
       */}
-      <Content className="site-layout">
+      <Content className="site-layout" 
+      style={{
+            margin: "0 0 0",
+            overflow: "initial",
+            minHeight: 380,
+            background: colorBgContainer,
+          }}>
         <div
           style={{
-            minHeight: 380,
+            textAlign: 'center',
             background: colorBgContainer,
           }}
         >

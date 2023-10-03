@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Timeline, Button } from "antd";
-
-const ModalHistorial = ({ visible, values, onClose ,onModalVisible }) => {
+import { StarTwoTone} from '@ant-design/icons';
+const ModalHistorial = ({ visible, values, onClose, onModalVisible }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  console.log("ModalHistorial Inventario", visible);
+
   useEffect(() => {
     setModalVisible(visible);
   }, [visible]);
@@ -18,7 +18,7 @@ const ModalHistorial = ({ visible, values, onClose ,onModalVisible }) => {
   };
   return (
     <Modal
-      destroyOnClose
+    closable={false}
       open={modalVisible}
       onCancel={onClose}
       footer={[
@@ -33,7 +33,7 @@ const ModalHistorial = ({ visible, values, onClose ,onModalVisible }) => {
       {values && values.length > 0 ? (
         <Timeline items={values} mode="alternate" />
       ) : (
-        <p>No values to display.</p>
+        <p>No values .</p>
       )}
     </Modal>
   );

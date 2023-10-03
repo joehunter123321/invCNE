@@ -1,9 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Collapse, Form, Input, Button, message } from "antd";
-import { collection, addDoc, setDoc, doc, getDoc } from "firebase/firestore";
+import { collection,  setDoc, doc, getDoc } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
-import { useUserAuth } from "../../auth/UserAuthContext";
-import BarcodeScanner from "../Login/BarcodeScanner";
+
 
 const { Panel } = Collapse;
 

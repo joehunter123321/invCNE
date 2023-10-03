@@ -25,11 +25,7 @@ function TestNav({ user, loading, userTipo }) {
   let Links = [
     { key: "/Inventario", label: "Agregar ", link: "/Inventario" },
     { key: "/MostrarInventario", label: "Buscar", link: "/MostrarInventario" },
-    {
-      key: "/MostrarInventarioAD",
-      label: "Elimnar ",
-      link: "/MostrarInventarioAD",
-    },
+   
     {
       key: "/AsignarInventario",
       label: "Asignar ",

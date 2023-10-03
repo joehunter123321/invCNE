@@ -9,7 +9,7 @@ import {
   Divider,
   Space,
   Popconfirm,
-  Timeline,
+  Tooltip,
   message,
 } from "antd";
 import {
@@ -20,12 +20,12 @@ import {
   updateDoc,
   setDoc,
   getDoc,
-  deleteDoc 
+  deleteDoc,
 } from "firebase/firestore";
 import { PlusOutlined } from "@ant-design/icons";
 import CsvDownloader from "react-csv-downloader";
-import BarcodeScanner from "../Login/BarcodeScanner";
-import InventarioHistorial from "./InventarioHistorial";
+
+
 import ScannerQrBarCode from "./ScannerQrBarCode";
 import ModalHistorial from "./ModalHistorial";
 const { Option } = Select;
@@ -69,8 +69,6 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
   const [form] = Form.useForm();
 
   const onFinish = (values, record) => {
-    
-
     handleUpdate(record.IDscanner, nameSelected);
     setModalVisible(false);
     form.resetFields();
@@ -115,7 +113,12 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
   };
 
   const handleUpdate = async (id, NOMBREASIGNADO) => {
-    console.log("Updating document", NOMBREASIGNADO, "with data", NOMBREASIGNADO);
+    console.log(
+      "Updating document",
+      NOMBREASIGNADO,
+      "with data",
+      NOMBREASIGNADO
+    );
     try {
       const db = getFirestore();
       const inventoryDocRef = doc(collection(db, "Inventario"), id);
@@ -200,12 +203,92 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
       fixed: "left",
       width: 100,
     },
+
     {
-      title: "Correo",
+      title: "Inventariado Por",
       dataIndex: "InventariadoPorUserEmail",
       key: "InventariadoPorUserEmail",
       width: 150,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (InventariadoPorUserEmail) => (
+        <Tooltip placement="topLeft" title={InventariadoPorUserEmail}>
+          {InventariadoPorUserEmail}
+        </Tooltip>
+      ),
     },
+    {
+      title: "Inventariado IDentidad",
+      dataIndex: "InventariadoPorUserIDentidad",
+      key: "InventariadoPorUserIDentidad",
+      width: 100,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (InventariadoPorUserIDentidad) => (
+        <Tooltip placement="topLeft" title={InventariadoPorUserIDentidad}>
+          {InventariadoPorUserIDentidad}
+        </Tooltip>
+      ),
+    },
+    {
+      title: "Estado",
+      dataIndex: "Estado",
+      key: "Estado",
+      width: 100,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (Estado) => (
+        <Tooltip placement="topLeft" title={Estado}>
+          {Estado}
+        </Tooltip>
+      ),
+    },
+    {
+      title: "Categoria",
+      dataIndex: "Categoria",
+      key: "Categoria",
+      width: 100,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (Categoria) => (
+        <Tooltip placement="topLeft" title={Categoria}>
+          {Categoria}
+        </Tooltip>
+      ),
+    },
+    {
+      title: "subCategoria",
+      dataIndex: "subCategoria",
+      key: "subCategoria",
+      width: 100,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (subCategoria) => (
+        <Tooltip placement="topLeft" title={subCategoria}>
+          {subCategoria}
+        </Tooltip>
+      ),
+    },
+    {
+      title: "Ubicación",
+      dataIndex: "Ubicacion",
+      key: "Ubicacion",
+      width: 100,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (Ubicacion) => (
+        <Tooltip placement="topLeft" title={Ubicacion}>
+          {Ubicacion}
+        </Tooltip>
+      ),
+    },
+
     {
       title: "Actions",
       dataIndex: "",
@@ -284,7 +367,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
               onConfirm={() => handleDelete(record.IDscanner)}
             >
               <Button type="primary" danger>
-                Delete
+                Eliminar
               </Button>
             </Popconfirm>
           </div>
@@ -302,9 +385,26 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
       displayName: "Categoria",
     },
     {
-      id: "field1",
-      displayName: "field1",
+      id: "subCategoria",
+      displayName: "subCategoria",
     },
+    {
+      id: "InventariadoPorUserIDentidad",
+      displayName: "InventariadoPorUserIDentidad",
+    },
+    {
+      id: "InventariadoPorUserEmail",
+      displayName: "InventariadoPorUserEmail",
+    },
+    {
+      id: "Estado",
+      displayName: "Estado",
+    },
+    {
+      id: "ubicacion",
+      displayName: "ubicacion",
+    },
+    
   ];
 
   function qrCodeSuccessCallback(childData) {
@@ -316,6 +416,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
       setModalHistorialVisible(false);
     }
   };
+
   return (
     <div
       style={{
@@ -327,16 +428,17 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
         visible={modalHistorialVisible}
         onModalVisible={handleModaHistorialVisible}
       />
-      <ScannerQrBarCode
+    
+
+      {!user ? null : !loading && user ? (
+        <div>
+            <ScannerQrBarCode
         fps={10}
         qrbox={250}
         disableFlip={false}
         ref={childRef}
         handleCallback={qrCodeSuccessCallback}
       />
-
-      {!user ? null : !loading && user ? (
-        <div>
           <Input
             value={searchValue}
             onChange={handleSearchChange}
@@ -349,6 +451,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
 
           <Button onClick={handleSearch}>Search</Button>
           <Table
+            bordered
             scroll={{ x: 600 }}
             rowKey={(record) => record.IDscanner}
             dataSource={data}
