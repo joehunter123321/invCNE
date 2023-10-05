@@ -5,23 +5,36 @@ import { message, Button } from "antd";
 const ScannerQrBarCode = React.forwardRef((props, ref) => {
   const [scanMethod, setScanMethod] = useState("");
   const [qrCodeResult, setQrCodeResult] = useState("");
+  const [qrCodeScanner, setQrCodeScanner] = useState(null);
+  const [isScanning, setisScanning] = useState(null);
 
   const startQrCodeScanner = async (facingMode) => {
+    setisScanning(true);
+
     const html5QrCode = new Html5Qrcode("reader");
+    setQrCodeScanner(html5QrCode);
+
     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
       setQrCodeResult(decodedText);
 
-      props.handleCallback(decodedText);
-      html5QrCode.stop(); // Stop QR code scanning
+      setisScanning(false);
+
+      html5QrCode.stop();
     };
 
     const config = {
-      fps: 2,
+      fps: 10,
       qrbox: { width: 250, height: 250 },
     };
 
-    // Start the QR code scanner
     html5QrCode.start({ facingMode }, config, qrCodeSuccessCallback);
+  };
+
+  const stopQrCodeScanner = () => {
+    if (isScanning) {
+      qrCodeScanner.stop();
+      setisScanning(false);
+    }
   };
 
   useEffect(() => {
@@ -35,17 +48,24 @@ const ScannerQrBarCode = React.forwardRef((props, ref) => {
   }, []);
 
   return (
-    <div style={{}}>
-      {scanMethod === "computer" ? (
-        <Button onClick={() => startQrCodeScanner("environment")}>
-          Scan QR Code (Computer)
-        </Button>
+    <div>
+      {isScanning ? (
+        <Button onClick={stopQrCodeScanner}>Cancelar Scaneo</Button>
       ) : (
-        <Button onClick={() => startQrCodeScanner("environment")}>
-          Scan QR Code (Mobile)
-        </Button>
+        <div>
+          {scanMethod === "computer" ? (
+            <Button onClick={() => startQrCodeScanner("environment")}>
+              Scan (Computer)
+            </Button>
+          ) : (
+            <Button onClick={() => startQrCodeScanner("environment")}>
+              Scan (Mobile)
+            </Button>
+          )}
+        </div>
       )}
-      <div id="reader"></div>
+
+      <div id="reader" width="600px"></div>
     </div>
   );
 });

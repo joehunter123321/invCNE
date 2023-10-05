@@ -1,8 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Collapse, Form, Input, Button, message } from "antd";
-import { collection,  setDoc, doc, getDoc } from "firebase/firestore";
+import { collection, setDoc, doc, getDoc } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
-
 
 const { Panel } = Collapse;
 
@@ -41,8 +40,6 @@ function Inventario(user) {
       console.error("Error adding document:", error);
     }
   };
-
-
 
   const form1Ref = useRef(null);
   const form2Ref = useRef(null);
@@ -169,6 +166,7 @@ function Inventario(user) {
   return (
     <div style={{ padding: "10%" }}>
       <h1> Inventario </h1>
+
       <Input
         value={searchTerm}
         onChange={handleSearch}

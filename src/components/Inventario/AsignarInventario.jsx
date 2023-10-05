@@ -25,7 +25,6 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import CsvDownloader from "react-csv-downloader";
 
-
 import ScannerQrBarCode from "./ScannerQrBarCode";
 import ModalHistorial from "./ModalHistorial";
 const { Option } = Select;
@@ -404,7 +403,6 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
       id: "ubicacion",
       displayName: "ubicacion",
     },
-    
   ];
 
   function qrCodeSuccessCallback(childData) {
@@ -428,17 +426,16 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
         visible={modalHistorialVisible}
         onModalVisible={handleModaHistorialVisible}
       />
-    
 
       {!user ? null : !loading && user ? (
         <div>
-            <ScannerQrBarCode
-        fps={10}
-        qrbox={250}
-        disableFlip={false}
-        ref={childRef}
-        handleCallback={qrCodeSuccessCallback}
-      />
+          <ScannerQrBarCode
+            fps={10}
+            qrbox={250}
+            disableFlip={false}
+            ref={childRef}
+            handleCallback={qrCodeSuccessCallback}
+          />
           <Input
             value={searchValue}
             onChange={handleSearchChange}

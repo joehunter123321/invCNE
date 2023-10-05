@@ -18,7 +18,7 @@ import {
   doc,
   getDoc,
 } from "firebase/firestore";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import CsvDownloader from "react-csv-downloader";
 
 import ScannerQrBarCode from "./ScannerQrBarCode";
@@ -27,6 +27,135 @@ import TablaInventario from "./TablaInventario";
 const { Option } = Select;
 
 function MostrarInventario({ user, loading, userTipo, childData }) {
+  const [data, setData] = useState([]);
+
+  //tablaMostrar inmfo
+  const [filteredData, setFilteredData] = useState(data);
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+  
+  const handleSearchtable = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  
+    if (selectedKeys[0]) {
+      const newData = data.filter((item) =>
+        item[dataIndex].toString().toLowerCase().includes(selectedKeys[0].toLowerCase())
+      );
+      setFilteredData(newData);
+      setIsFiltered(true);
+    } else {
+      setFilteredData(data);
+      setIsFiltered(false);
+    }
+  };
+ 
+  const handleResettable = (clearFilters) => {
+    console.log("handleResettable",isFiltered);
+    clearFilters();
+  setSearchText('');
+  setSearchedColumn('');
+  setFilteredData(data); // Reset filtered data to original data
+  setIsFiltered(false); // Set isFiltered to false
+
+  console.log("setIsFilteredsetIsFiltered",isFiltered);
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearchtable(selectedKeys, confirm, dataIndex)
+          }
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearchtable(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleResettable(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Restablecer
+          </Button>
+     
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            cerrar
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1677ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: "#ffc069",
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+  //////////table
   const [items, setItems] = useState(["Stock"]);
   const [modalHistorialVisible, setModalHistorialVisible] = useState(false);
   const [HistorialValue, setHistorialValue] = useState(null);
@@ -60,7 +189,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
 
   const [searchValue, setSearchValue] = useState("");
   const [filterBy, setFilterBy] = useState("IDscanner");
-  const [data, setData] = useState([]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
 
@@ -91,6 +220,14 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
         .filter((doc) => doc.data()[filterBy] === searchValue)
         .map((doc) => doc.data());
       setData(filteredData);
+   
+
+
+      setSearchText('');
+      setSearchedColumn('');
+      setFilteredData(data); // Reset filtered data to original data
+      setIsFiltered(false); // Set isFiltered to false
+   
     } catch (error) {
       console.error("Error fetching elements:", error);
     }
@@ -152,6 +289,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
       title: "Inventariado Por",
       dataIndex: "InventariadoPorUserEmail",
       key: "InventariadoPorUserEmail",
+      ...getColumnSearchProps("InventariadoPorUserEmail"),
       width: 150,
       ellipsis: {
         showTitle: false,
@@ -181,6 +319,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
       dataIndex: "Estado",
       key: "Estado",
       width: 100,
+      ...getColumnSearchProps("Estado"),
       ellipsis: {
         showTitle: false,
       },
@@ -209,6 +348,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
       dataIndex: "subCategoria",
       key: "subCategoria",
       width: 100,
+      ...getColumnSearchProps("subCategoria"),
       ellipsis: {
         showTitle: false,
       },
@@ -350,6 +490,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
     }
   };
 
+
   return (
     <div
       style={{
@@ -364,7 +505,6 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
 
       {!user ? null : !loading && user ? (
         <div>
-           <TablaInventario/>
           <ScannerQrBarCode
             fps={10}
             qrbox={250}
@@ -387,7 +527,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
             bordered
             scroll={{ x: 600 }}
             rowKey={(record) => record.IDscanner}
-            dataSource={data}
+            dataSource={isFiltered ? filteredData : data}
             columns={columns}
           />
 
@@ -397,7 +537,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
             separator=";"
             wrapColumnChar="'"
             columns={columns2}
-            datas={data}
+            datas={isFiltered ? filteredData : data}
             text="DOWNLOAD"
           />
         </div>
