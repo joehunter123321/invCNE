@@ -164,7 +164,7 @@ function Inventario(user) {
   );
 
   return (
-    <div style={{ padding: "10%" }}>
+    <div style={{ paddingTop:"5%", paddingLeft:"5%", paddingRight:"5%" , height:"80vh"}}>
       <h1> Inventario </h1>
 
       <Input

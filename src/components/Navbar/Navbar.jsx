@@ -1,10 +1,59 @@
-import React, { useState } from "react";
-import { Bars3BottomRightIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { getAuth, signOut } from "firebase/auth";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { MailOutlined, SettingOutlined, MenuOutlined } from "@ant-design/icons";
+import { Menu, Drawer, Button, Spin } from "antd";
 import Logo from "../../assets/images/logo.jpg";
-import { Button, Spin } from "antd";
-const Navbar = ({ user, loading, userTipo }) => {
-  console.log("navbaruserTipo", userTipo);
+import { getAuth, signOut } from "firebase/auth";
+const Navbar = ({ user, loading, userTipo, childData }) => {
+  const navigate = useNavigate();
+  const [current, setCurrent] = useState("");
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuNormal, setmenuNormal] = useState("");
+  const [menuResponsive, setmenuResponsive] = useState("");
+
+  const userType = "Admin"; // Replace with your user type logic
+
+  const items = [
+    user
+      ? {
+          label: "1",
+          key: "SubMenu1",
+          icon: <SettingOutlined />,
+          children: [
+            {
+              type: "group",
+              label: "Agregar",
+              children: [
+                { label: "Maletas", key: "AgregarMaletas" },
+                { label: "Logistica", key: "AgragarLogistica" },
+              ],
+            },
+          ],
+        }
+      : null,
+    user
+      ? {
+          label: "2",
+          key: "SubMenu2",
+          icon: <SettingOutlined />,
+          children: [
+            {
+              type: "group",
+              label: "Buscar",
+              children: [
+                { label: "Maletas", key: "BuscarMaletas" },
+                { label: "Logistica", key: "BuscarLogistica" },
+              ],
+            },
+          ],
+        }
+      : null,
+    ...(user && userType === "Admin"
+      ? [{ label: "Asignar", key: "Asignar", icon: <MailOutlined /> }]
+      : []),
+    { label: user ? "LogOut" : "Login", key: "LogOut" },
+  ];
+
   const handleLogout = () => {
     const auth = getAuth();
     signOut(auth)
@@ -14,112 +63,107 @@ const Navbar = ({ user, loading, userTipo }) => {
       .catch((error) => {
         // An error happened.
       });
-    console.log("navbar", user);
   };
 
-  let Links = [
-    { key: "1", name: "INICIO", link: "/" },
-    { key: "2", name: "Agregar ", link: "/Inventario" },
-    { key: "3", name: "Buscar", link: "/MostrarInventario" },
-    { key: "4", name: "Elimnar ", link: "/MostrarInventarioAD" },
-    { key: "5", name: "Asignar ", link: "/AsignarInventario" },
-  ];
+  const handleDrawerOpen = () => {
+    setMenuVisible(true);
+  };
 
-  Links = Links.filter(
-    (link) =>
-      link.link !== "/MostrarInventarioAD" ||
-      (link.link === "/MostrarInventarioAD" &&
-        loading === false &&
-        userTipo === "Admin")
-  );
-  if (!user) {
-    Links = [{ key: "1", name: "INICIO", link: "/" }];
-  }
+  const handleDrawerClose = () => {
+    setMenuVisible(false);
+  };
 
-  let [open, setOpen] = useState(false);
+  useEffect(() => {
+    const handleMediaQueryChange = (mediaQuery) => {
+      if (mediaQuery.matches) {
+        setmenuNormal(false);
+        setmenuResponsive(true);
+      } else {
+        setmenuNormal(true);
+        setmenuResponsive(false);
+      }
+    };
+
+    const mediaQuery = window.matchMedia("(max-width: 480px)");
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+
+    // Agrega esta parte para restablecer el estado al aumentar el tamaño de la pantalla
+    if (!mediaQuery.matches) {
+      setmenuNormal(true);
+      setmenuResponsive(false);
+    }
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+    };
+  }, []);
+
+  const onClick = (e) => {
+    setCurrent(e.key);
+    if (e.key === "LogOut") {
+      setMenuVisible(false);
+      handleLogout();
+    } else {
+      navigate(e.key);
+      setMenuVisible(false);
+    }
+  };
 
   return (
     <div>
-      <div className="shadow-md w-full fixed top-0 left-0">
-        <div className="md:flex items-center justify-between bg-white md:py-0 sm:py-4 xs:py-4  xxs:py-4  md:px-10 px-7">
-          {/* logo section */}
-          <a href="/">
-            <div className="font-bold text-2xl cursor-pointer flex items-center gap-1">
-              <img src={Logo} className="w-12 h-12" />
-              <span>Test Inv</span>
-            </div>
-          </a>
-          {/* Menu icon */}
-          <div
-            onClick={() => setOpen(!open)}
-            className="absolute right-8 top-6 cursor-pointer md:hidden w-7 h-7"
-          >
-            {open ? <XMarkIcon /> : <Bars3BottomRightIcon />}
-          </div>
-
-          <div>
-            {!user ? (
-              <ul
-                className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${
-                  open ? "top-12" : "top-[-490px]"
-                }`}
-              >
-                {Links.map((link) => (
-                  <li
-                    key={link.key}
-                    className="md:ml-8 md:my-0 my-7 font-semibold"
-                  >
-                    <a
-                      href={link.link}
-                      className="text-gray-800 hover:text-blue-400 duration-500"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            ) : !loading && user ? (
-              <ul
-                className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${
-                  open ? "top-12" : "top-[-490px]"
-                }`}
-              >
-                {Links.map((link) => (
-                  <li
-                    key={link.key}
-                    className="md:ml-8 md:my-0 my-7 font-semibold"
-                  >
-                    <a
-                      href={link.link}
-                      className="text-gray-800 hover:text-blue-400 duration-500"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-                <div>
-                  {user ? (
-                    <Button
-                      style={{
-                        marginLeft: "20px",
-                        backgroundColor: "blue",
-                        color: "white",
-                      }}
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </Button>
-                  ) : null}
-                </div>
-              </ul>
-            ) : (
-              <Spin size="large" />
-            )}
-
-            {/* linke items */}
-          </div>
+      <div
+        className="Nav"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          backgroundColor: "white",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+        }}
+      >
+        <div
+          className="Logo"
+          style={{ alignSelf: "flex-start", paddingLeft: "20px" }}
+        >
+          <img src={Logo} alt="Logo" style={{ width: 40 }} />
         </div>
+
+        {menuNormal ? (
+          loading ? (
+            <Spin size="large" />
+          ) : (
+            <div style={{ alignSelf: "flex-end" }}>
+              <Menu
+                onClick={onClick}
+                selectedKeys={[current]}
+                mode="horizontal"
+                items={items}
+              />
+            </div>
+          )
+        ) : (
+          <div>
+            <Button type="text" onClick={handleDrawerOpen}>
+              <MenuOutlined />
+            </Button>
+          </div>
+        )}
       </div>
+
+      {loading ? null : (
+        <Drawer
+          placement="right"
+          open={menuVisible}
+          onClose={handleDrawerClose}
+          bodyStyle={{ padding: 0 }}
+        >
+          <Menu
+            onClick={onClick}
+            selectedKeys={[current]}
+            mode="inline"
+            items={items}
+          />
+        </Drawer>
+      )}
     </div>
   );
 };

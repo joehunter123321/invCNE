@@ -35,15 +35,18 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
-  
+
   const handleSearchtable = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
-  
+
     if (selectedKeys[0]) {
       const newData = data.filter((item) =>
-        item[dataIndex].toString().toLowerCase().includes(selectedKeys[0].toLowerCase())
+        item[dataIndex]
+          .toString()
+          .toLowerCase()
+          .includes(selectedKeys[0].toLowerCase())
       );
       setFilteredData(newData);
       setIsFiltered(true);
@@ -52,16 +55,16 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
       setIsFiltered(false);
     }
   };
- 
-  const handleResettable = (clearFilters) => {
-    console.log("handleResettable",isFiltered);
-    clearFilters();
-  setSearchText('');
-  setSearchedColumn('');
-  setFilteredData(data); // Reset filtered data to original data
-  setIsFiltered(false); // Set isFiltered to false
 
-  console.log("setIsFilteredsetIsFiltered",isFiltered);
+  const handleResettable = (clearFilters) => {
+    console.log("handleResettable", isFiltered);
+    clearFilters();
+    setSearchText("");
+    setSearchedColumn("");
+    setFilteredData(data); // Reset filtered data to original data
+    setIsFiltered(false); // Set isFiltered to false
+
+    console.log("setIsFilteredsetIsFiltered", isFiltered);
   };
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
@@ -113,7 +116,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
           >
             Restablecer
           </Button>
-     
+
           <Button
             type="link"
             size="small"
@@ -220,14 +223,11 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
         .filter((doc) => doc.data()[filterBy] === searchValue)
         .map((doc) => doc.data());
       setData(filteredData);
-   
 
-
-      setSearchText('');
-      setSearchedColumn('');
+      setSearchText("");
+      setSearchedColumn("");
       setFilteredData(data); // Reset filtered data to original data
       setIsFiltered(false); // Set isFiltered to false
-   
     } catch (error) {
       console.error("Error fetching elements:", error);
     }
@@ -489,7 +489,6 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
       setModalHistorialVisible(false);
     }
   };
-
 
   return (
     <div

@@ -20,7 +20,7 @@ import {
 } from "firebase/firestore";
 const { Option } = Select;
 import { useUserAuth } from "../../auth/UserAuthContext";
-const Rack = () => {
+const AddMaletas = () => {
   const { user } = useUserAuth(); // Access and use user data as needed
 
   const [form] = Form.useForm();
@@ -268,4 +268,4 @@ const Rack = () => {
   );
 };
 
-export default Rack;
+export default AddMaletas;

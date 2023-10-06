@@ -18,7 +18,6 @@ import ProtectedRoute from "./auth/protected-route";
 import { UserAuthContextProvider } from "./auth/UserAuthContext";
 
 import { auth } from "../firebaseConfig";
-import Inventario from "./components/Inventario/Inventario";
 
 import MostrarInventario from "./components/Inventario/mostrarInventario";
 import MostrarInventarioAD from "./components/Inventario/MostrarInventarioAD";
@@ -26,6 +25,9 @@ import { useUserAuth } from "./auth/UserAuthContext";
 
 import AsignarInventario from "./components/Inventario/AsignarInventario";
 import TestNav from "./components/Navbar/TestNav";
+import Inventario from "./components/Inventario/inventario";
+import CustomFooter from "./components/Footer/CustomFooter";
+import AddMaletas from "./components/Inventario/AddMaletas";
 export const ColorContext = createContext();
 
 const { Header, Content, Footer } = Layout;
@@ -43,59 +45,55 @@ const App = () => {
   ////////////////////////////////
 
   return (
-    <Layout>
-      {/* 
-      <Header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 1,
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        <UserAuthContextProvider>
-          <Navbar user={user} loading={loading} userTipo={userTipo} />
-          
-        </UserAuthContextProvider>
-        
-      </Header>
-      */}
-      <Content className="site-layout" 
-      style={{
-            margin: "0 0 0",
-            overflow: "initial",
-            minHeight: 380,
-            background: colorBgContainer,
-          }}>
-        <div
+    <UserAuthContextProvider>
+    <BrowserRouter>
+     
+      <Layout>
+        <Header
+          style={{ boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)" }}
+        >
+           <Navbar user={user} loading={loading} userTipo={userTipo} />
+        </Header>
+
+        <Content
+          className="site-layout"
           style={{
-            textAlign: 'center',
-            background: colorBgContainer,
+            paddingTop: "5px",
+            paddingRight: "5%",
+            paddingLeft: "5%",
+            height: "100vh",
           }}
         >
-          <UserAuthContextProvider>
-            <BrowserRouter>
-              <TestNav user={user} loading={loading} userTipo={userTipo} />
+          <div
+            style={{
+              textAlign: "center",
+              background: colorBgContainer,
+            }}
+          >
+           
+             
               <Routes>
                 <Route
-                  path="/Inventario"
+                  path="/AgregarMaletas"
                   element={
                     <ProtectedRoute>
-                      <Inventario
-                        user={user}
-                        loading={loading}
-                        userTipo={userTipo}
-                      />
+                      <AddMaletas />
                     </ProtectedRoute>
                   }
                 />
                 <Route
-                  path="/MostrarInventario"
+                  path="/AgragarLogistica"
                   element={
                     <ProtectedRoute>
-                      <MostrarInventario
+                      <Inventario />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/BuscarLogistica"
+                  element={
+                    <ProtectedRoute>
+                      <AsignarInventario
                         user={user}
                         loading={loading}
                         userTipo={userTipo}
@@ -130,16 +128,19 @@ const App = () => {
 
                 <Route path="/" element={<Login />} />
               </Routes>
-            </BrowserRouter>
-          </UserAuthContextProvider>
-        </div>
-      </Content>
-      <Footer
-        style={{
-          textAlign: "center",
-        }}
-      ></Footer>
-    </Layout>
+            
+          </div>
+        </Content>
+        <Footer
+          style={{
+            textAlign: "center",
+          }}
+        >
+          <CustomFooter />
+        </Footer>
+      </Layout>
+    </BrowserRouter>
+    </UserAuthContextProvider>
   );
 };
 
