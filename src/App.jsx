@@ -28,6 +28,7 @@ import TestNav from "./components/Navbar/TestNav";
 import Inventario from "./components/Inventario/inventario";
 import CustomFooter from "./components/Footer/CustomFooter";
 import AddMaletas from "./components/Inventario/AddMaletas";
+import BuscarMaletas from "./components/Inventario/BuscarMaletas";
 export const ColorContext = createContext();
 
 const { Header, Content, Footer } = Layout;
@@ -46,32 +47,34 @@ const App = () => {
 
   return (
     <UserAuthContextProvider>
-    <BrowserRouter>
-     
-      <Layout>
-        <Header
-          style={{ boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)" }}
-        >
-           <Navbar user={user} loading={loading} userTipo={userTipo} />
-        </Header>
-
-        <Content
-          className="site-layout"
-          style={{
-            paddingTop: "5px",
-            paddingRight: "5%",
-            paddingLeft: "5%",
-            height: "100vh",
-          }}
-        >
-          <div
+      <BrowserRouter>
+        <Layout>
+          <Header
             style={{
-              textAlign: "center",
-              background: colorBgContainer,
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+              width: "100%",
+              marginBottom: "10px",
             }}
           >
-           
-             
+            <Navbar user={user} loading={loading} userTipo={userTipo} />
+          </Header>
+
+          <Content
+            className="site-layout"
+            style={{
+              paddingRight: "5%",
+              paddingLeft: "5%",
+              marginBottom: "50px",
+              
+            }}
+          >
+            <div
+              style={{
+                textAlign: "center",
+                background: colorBgContainer,
+               
+              }}
+            >
               <Routes>
                 <Route
                   path="/AgregarMaletas"
@@ -102,10 +105,10 @@ const App = () => {
                   }
                 />
                 <Route
-                  path="/MostrarInventarioAD"
+                  path="/BuscarMaletas"
                   element={
                     <ProtectedRoute>
-                      <MostrarInventarioAD
+                      <BuscarMaletas
                         user={user}
                         loading={loading}
                         userTipo={userTipo}
@@ -128,18 +131,17 @@ const App = () => {
 
                 <Route path="/" element={<Login />} />
               </Routes>
-            
-          </div>
-        </Content>
-        <Footer
-          style={{
-            textAlign: "center",
-          }}
-        >
-          <CustomFooter />
-        </Footer>
-      </Layout>
-    </BrowserRouter>
+            </div>
+          </Content>
+          <Footer
+            style={{
+              textAlign: "center",
+            }}
+          >
+            <CustomFooter />
+          </Footer>
+        </Layout>
+      </BrowserRouter>
     </UserAuthContextProvider>
   );
 };

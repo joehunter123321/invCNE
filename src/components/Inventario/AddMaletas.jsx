@@ -20,6 +20,7 @@ import {
 } from "firebase/firestore";
 const { Option } = Select;
 import { useUserAuth } from "../../auth/UserAuthContext";
+import CustomForm from "./CustomForm";
 const AddMaletas = () => {
   const { user } = useUserAuth(); // Access and use user data as needed
 
@@ -31,14 +32,13 @@ const AddMaletas = () => {
   const onFinish = async (values, formId, formRef) => {
     console.log("values.user:", user.Identidad);
     values.IDScanner = searchValue; // Set the value of IDScanner to searchValue
-    message.success(`searchValue: ${searchValue}`);
 
     console.log("values.values:", values);
 
     form.setFieldsValue({
       IDScanner: "",
     });
-
+    setSearchValue("");
     if (!values.BloqueCheck) {
       form.setFieldsValue({ Bloque: "" });
     }
@@ -77,6 +77,7 @@ const AddMaletas = () => {
 
       await setDoc(documentRef, values);
       console.log("Document written with ID:", documentRef.id);
+      message.success(`searchValue: ${searchValue}`);
     } catch (error) {
       console.error("Error adding document:", error);
     }
@@ -101,8 +102,8 @@ const AddMaletas = () => {
 
   return (
     <div>
-      <h1>sssssss</h1>
-      <h1>{searchValue}</h1>
+     <CustomForm/>
+     
 
       <Card
         title="Formulario Maletas"

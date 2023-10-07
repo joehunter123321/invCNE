@@ -16,7 +16,7 @@ const ScannerQrBarCode = React.forwardRef((props, ref) => {
 
     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
       setQrCodeResult(decodedText);
-
+      props.handleCallback(decodedText);
       setisScanning(false);
 
       html5QrCode.stop();
@@ -65,7 +65,7 @@ const ScannerQrBarCode = React.forwardRef((props, ref) => {
         </div>
       )}
 
-      <div id="reader" width="600px"></div>
+      <div id="reader"></div>
     </div>
   );
 });

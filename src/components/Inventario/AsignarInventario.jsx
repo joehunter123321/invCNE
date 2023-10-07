@@ -21,6 +21,8 @@ import {
   setDoc,
   getDoc,
   deleteDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { PlusOutlined } from "@ant-design/icons";
 import CsvDownloader from "react-csv-downloader";
@@ -34,7 +36,8 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
   const [modalHistorialVisible, setModalHistorialVisible] = useState(false);
   const [HistorialValue, setHistorialValue] = useState(null);
   const [historialData, sethistorialData] = useState(null);
-
+  const [columns3, setColumns] = useState([]);
+  const [columnsCsv, setColumnsCsv] = useState([]);
   const [name, setName] = useState("");
   const [nameSelected, setnameSelected] = useState("");
   const inputRef = useRef(null);
@@ -89,11 +92,132 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
   const handleSearch = async () => {
     try {
       const db = getFirestore();
-      const querySnapshot = await getDocs(collection(db, "Inventario"));
-      const filteredData = querySnapshot.docs
-        .filter((doc) => doc.data()[filterBy] === searchValue)
-        .map((doc) => doc.data());
-      setData(filteredData);
+
+      const fieldNames = [];
+
+      const q = query(
+        collection(db, "Inventario"),
+        where(filterBy, "==", searchValue)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const dataFiltrada = [];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        dataFiltrada.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+        Object.keys(data).forEach((fieldName) => {
+          if (!fieldNames.includes(fieldName)) {
+            fieldNames.push(fieldName);
+          }
+        });
+      });
+
+      // Agregar columna IDscanner como primera columna
+      const indexOfIDscanner = fieldNames.indexOf("IDscanner");
+      if (indexOfIDscanner !== -1) {
+        fieldNames.splice(indexOfIDscanner, 1);
+        fieldNames.unshift("IDscanner");
+      }
+
+      const dynamicColumns = fieldNames.map((fieldName) => ({
+        title: fieldName,
+        dataIndex: fieldName,
+        key: fieldName,
+      }));
+
+      const dynamicColumnsWithIdAndDisplayName = fieldNames.map(
+        (fieldName) => ({
+          id: fieldName,
+          displayName: fieldName,
+        })
+      );
+
+      setData(dataFiltrada);
+
+      // Agregar columna adicional "Actions"
+      const columnsWithActions = [
+        ...dynamicColumns,
+        {
+          title: "Actions",
+          dataIndex: "",
+          key: "actions",
+          width: 250,
+          render: (values, record) => (
+            <>
+              <Modal open={modalVisible} onCancel={handleCancel} footer={null}>
+                <Form
+                  onFinish={() => onFinish(values, record)}
+                  layout="vertical"
+                  form={form}
+                >
+                  <Form.Item name="AsignarA" label="AsignadoA">
+                    <Select
+                      onSelect={onNameSelected}
+                      value={name}
+                      name="AsignarA"
+                      style={{ width: 300 }}
+                      placeholder="custom dropdown render"
+                      dropdownRender={(menu) => (
+                        <>
+                          {menu}
+                          <Divider style={{ margin: "8px 0" }} />
+                          <Space style={{ padding: "0 8px 4px" }}>
+                            <Input
+                              placeholder="Please enter item"
+                              ref={inputRef}
+                              value={name}
+                              onChange={onNameChange}
+                            />
+                            <Button
+                              type="text"
+                              icon={<PlusOutlined />}
+                              onClick={addItem}
+                            >
+                              Add item
+                            </Button>
+                          </Space>
+                        </>
+                      )}
+                      options={items.map((item) => ({
+                        label: item,
+                        value: item,
+                      }))}
+                    />
+                  </Form.Item>
+                  <Button type="primary" htmlType="submit">
+                    Submit
+                  </Button>
+                </Form>
+              </Modal>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Button onClick={() => setModalVisible(true)}>Asignar</Button>
+                <Button
+                  style={{ background: "yellow" }}
+                  onClick={() => handleHistorial(record.IDscanner)}
+                >
+                  Historial
+                </Button>
+                <Popconfirm
+                  title="Sure to delete?"
+                  onConfirm={() => handleDelete(record.IDscanner)}
+                >
+                  <Button type="primary" danger>
+                    Eliminar
+                  </Button>
+                </Popconfirm>
+              </div>
+            </>
+          ),
+        },
+      ];
+
+      setColumns(columnsWithActions);
+
+      setColumnsCsv(dynamicColumnsWithIdAndDisplayName);
     } catch (error) {
       console.error("Error fetching elements:", error);
     }
@@ -414,7 +538,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
       setModalHistorialVisible(false);
     }
   };
-
+  console.log("columns3:", JSON.stringify(columns3, null, 2));
   return (
     <div
       style={{
@@ -452,7 +576,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
             scroll={{ x: 600 }}
             rowKey={(record) => record.IDscanner}
             dataSource={data}
-            columns={columns}
+            columns={columns3}
           />
 
           <CsvDownloader
@@ -460,10 +584,11 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
             extension=".csv"
             separator=";"
             wrapColumnChar="'"
-            columns={columns2}
+            columns={columnsCsv}
             datas={data}
-            text="DOWNLOAD"
-          />
+          >
+            <Button>Download</Button>
+          </CsvDownloader>
         </div>
       ) : null}
     </div>
