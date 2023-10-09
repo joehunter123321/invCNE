@@ -29,6 +29,7 @@ import Inventario from "./components/Inventario/inventario";
 import CustomFooter from "./components/Footer/CustomFooter";
 import AddMaletas from "./components/Inventario/AddMaletas";
 import BuscarMaletas from "./components/Inventario/BuscarMaletas";
+import PanelDinamico from "./components/Inventario/PanelDinamico";
 export const ColorContext = createContext();
 
 const { Header, Content, Footer } = Layout;
@@ -58,7 +59,7 @@ const App = () => {
           >
             <Navbar user={user} loading={loading} userTipo={userTipo} />
           </Header>
-
+          <PanelDinamico/>
           <Content
             className="site-layout"
             style={{
