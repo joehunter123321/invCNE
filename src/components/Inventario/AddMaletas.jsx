@@ -101,13 +101,15 @@ const AddMaletas = () => {
   };
 
   return (
-    <div>
-     <CustomForm/>
-     
-
+    <div style={{ height: "100vh", paddingTop: "5%" }}>
       <Card
+        hoverable
         title="Formulario Maletas"
-        style={{ maxWidth: 600, margin: "0 auto" }}
+        style={{
+          maxWidth: 600,
+          margin: "0 auto",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
+        }}
       >
         <div>
           <ScannerQrBarCode

@@ -29,7 +29,7 @@ import CsvDownloader from "react-csv-downloader";
 import ModalEditarMaletas from "./ModalEditarMaletas";
 
 function BuscarMaletas({ user, loading, userTipo, childData }) {
-  const [columns3, setColumns] = useState([]);
+  const [columns, setColumns] = useState([]);
   const [columnsCsv, setColumnsCsv] = useState([]);
   const inputRef = useRef(null);
   const childRef = useRef(null);
@@ -50,6 +50,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
 
   const handleSearch = async () => {
     try {
+      console.log("searchValue", searchValue, filterBy);
       const db = getFirestore();
 
       const q = query(
@@ -165,11 +166,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
     }
   };
   return (
-    <div
-      style={{
-        paddingRight: "5%",
-      }}
-    >
+    <div style={{ height: "100vh", paddingTop: "5%" }}>
       <h1>Buscar Maletas</h1>
 
       <ScannerQrBarCode
@@ -195,7 +192,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
         scroll={{ x: 600 }}
         rowKey={(record) => record.IDScanner}
         dataSource={data}
-        columns={columns3}
+        columns={columns}
       />
 
       <CsvDownloader

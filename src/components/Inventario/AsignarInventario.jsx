@@ -29,6 +29,7 @@ import CsvDownloader from "react-csv-downloader";
 
 import ScannerQrBarCode from "./ScannerQrBarCode";
 import ModalHistorial from "./ModalHistorial";
+import ModalAsignar from "./ModalAsignar";
 const { Option } = Select;
 
 function AsignarInventario({ user, loading, userTipo, childData }) {
@@ -69,6 +70,12 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
   const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [idScanner, setIdScanner] = useState(null);
+  const handleAsignar = (id) => {
+    setModalVisible(true);
+    setIdScanner(id);
+  };
+
 
   const onFinish = (values, record) => {
     handleUpdate(record.IDscanner, nameSelected);
@@ -148,7 +155,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
           width: 250,
           render: (values, record) => (
             <>
-              <Modal open={modalVisible} onCancel={handleCancel} footer={null}>
+              <Modal open={false} onCancel={handleCancel} footer={null}>
                 <Form
                   onFinish={() => onFinish(values, record)}
                   layout="vertical"
@@ -194,7 +201,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
                 </Form>
               </Modal>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Button onClick={() => setModalVisible(true)}>Asignar</Button>
+              <Button onClick={() => handleAsignar(record.IDscanner)}>Asignar</Button>
                 <Button
                   style={{ background: "yellow" }}
                   onClick={() => handleHistorial(record.IDscanner)}
@@ -317,217 +324,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
     setHistorialValue(value);
   };
 
-  const columns = [
-    // Customize columns based on your data requirements
-    {
-      title: "IDscanner",
-      dataIndex: "IDscanner",
-      key: "IDscanner",
-      fixed: "left",
-      width: 100,
-    },
-
-    {
-      title: "Inventariado Por",
-      dataIndex: "InventariadoPorUserEmail",
-      key: "InventariadoPorUserEmail",
-      width: 150,
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (InventariadoPorUserEmail) => (
-        <Tooltip placement="topLeft" title={InventariadoPorUserEmail}>
-          {InventariadoPorUserEmail}
-        </Tooltip>
-      ),
-    },
-    {
-      title: "Inventariado IDentidad",
-      dataIndex: "InventariadoPorUserIDentidad",
-      key: "InventariadoPorUserIDentidad",
-      width: 100,
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (InventariadoPorUserIDentidad) => (
-        <Tooltip placement="topLeft" title={InventariadoPorUserIDentidad}>
-          {InventariadoPorUserIDentidad}
-        </Tooltip>
-      ),
-    },
-    {
-      title: "Estado",
-      dataIndex: "Estado",
-      key: "Estado",
-      width: 100,
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (Estado) => (
-        <Tooltip placement="topLeft" title={Estado}>
-          {Estado}
-        </Tooltip>
-      ),
-    },
-    {
-      title: "Categoria",
-      dataIndex: "Categoria",
-      key: "Categoria",
-      width: 100,
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (Categoria) => (
-        <Tooltip placement="topLeft" title={Categoria}>
-          {Categoria}
-        </Tooltip>
-      ),
-    },
-    {
-      title: "subCategoria",
-      dataIndex: "subCategoria",
-      key: "subCategoria",
-      width: 100,
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (subCategoria) => (
-        <Tooltip placement="topLeft" title={subCategoria}>
-          {subCategoria}
-        </Tooltip>
-      ),
-    },
-    {
-      title: "Ubicación",
-      dataIndex: "Ubicacion",
-      key: "Ubicacion",
-      width: 100,
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (Ubicacion) => (
-        <Tooltip placement="topLeft" title={Ubicacion}>
-          {Ubicacion}
-        </Tooltip>
-      ),
-    },
-
-    {
-      title: "Actions",
-      dataIndex: "",
-      key: "actions",
-      width: 250,
-      render: (values, record) => (
-        <>
-          <Modal open={modalVisible} onCancel={handleCancel} footer={null}>
-            <Form
-              onFinish={() => onFinish(values, record)}
-              layout="vertical"
-              form={form}
-            >
-              <Form.Item name="AsignarA" label="AsignadoA">
-                <Select
-                  onSelect={onNameSelected}
-                  value={name}
-                  name="AsignarA"
-                  style={{
-                    width: 300,
-                  }}
-                  placeholder="custom dropdown render"
-                  dropdownRender={(menu) => (
-                    <>
-                      {menu}
-                      <Divider
-                        style={{
-                          margin: "8px 0",
-                        }}
-                      />
-                      <Space
-                        style={{
-                          padding: "0 8px 4px",
-                        }}
-                      >
-                        <Input
-                          placeholder="Please enter item"
-                          ref={inputRef}
-                          value={name}
-                          onChange={onNameChange}
-                        />
-                        <Button
-                          type="text"
-                          icon={<PlusOutlined />}
-                          onClick={addItem}
-                        >
-                          Add item
-                        </Button>
-                      </Space>
-                    </>
-                  )}
-                  options={items.map((item) => ({
-                    label: item,
-                    value: item,
-                  }))}
-                />
-              </Form.Item>
-
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </Form>
-          </Modal>
-
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Button onClick={() => setModalVisible(true)}>Asignar</Button>
-
-            <Button
-              style={{ background: "yellow" }}
-              onClick={() => handleHistorial(record.IDscanner)}
-            >
-              Historial
-            </Button>
-            <Popconfirm
-              title="Sure to delete?"
-              onConfirm={() => handleDelete(record.IDscanner)}
-            >
-              <Button type="primary" danger>
-                Eliminar
-              </Button>
-            </Popconfirm>
-          </div>
-        </>
-      ),
-    },
-  ];
-  const columns2 = [
-    {
-      id: "IDscanner",
-      displayName: "IDscanner",
-    },
-    {
-      id: "Categoria",
-      displayName: "Categoria",
-    },
-    {
-      id: "subCategoria",
-      displayName: "subCategoria",
-    },
-    {
-      id: "InventariadoPorUserIDentidad",
-      displayName: "InventariadoPorUserIDentidad",
-    },
-    {
-      id: "InventariadoPorUserEmail",
-      displayName: "InventariadoPorUserEmail",
-    },
-    {
-      id: "Estado",
-      displayName: "Estado",
-    },
-    {
-      id: "ubicacion",
-      displayName: "ubicacion",
-    },
-  ];
+ 
 
   function qrCodeSuccessCallback(childData) {
     setSearchValue(childData);
@@ -538,13 +335,17 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
       setModalHistorialVisible(false);
     }
   };
+
+  const handleModalAsignarlVisible = (isVisible) => {
+    console.log("modddd", isVisible);
+    // Use the updated modalVisible value here in the parent
+    if (isVisible) {
+      setModalVisible(false);
+    }
+  };
   console.log("columns3:", JSON.stringify(columns3, null, 2));
   return (
-    <div
-      style={{
-        padding: "10%",
-      }}
-    >
+   <div style={{ height: "100vh", paddingTop: "5%" }}>
       <ModalHistorial
         values={historialData}
         visible={modalHistorialVisible}
@@ -589,6 +390,8 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
           >
             <Button>Download</Button>
           </CsvDownloader>
+          <ModalAsignar visible={modalVisible} idScanner={idScanner}
+           onModalVisible={handleModalAsignarlVisible}/>
         </div>
       ) : null}
     </div>

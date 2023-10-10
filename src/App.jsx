@@ -29,7 +29,7 @@ import Inventario from "./components/Inventario/inventario";
 import CustomFooter from "./components/Footer/CustomFooter";
 import AddMaletas from "./components/Inventario/AddMaletas";
 import BuscarMaletas from "./components/Inventario/BuscarMaletas";
-import PanelDinamico from "./components/Inventario/PanelDinamico";
+import AddInventario from "./components/Inventario/AddInventario";
 export const ColorContext = createContext();
 
 const { Header, Content, Footer } = Layout;
@@ -59,21 +59,20 @@ const App = () => {
           >
             <Navbar user={user} loading={loading} userTipo={userTipo} />
           </Header>
-          <PanelDinamico/>
+
           <Content
             className="site-layout"
             style={{
               paddingRight: "5%",
               paddingLeft: "5%",
               marginBottom: "50px",
-              
+              height: "100vh",
             }}
           >
             <div
               style={{
                 textAlign: "center",
                 background: colorBgContainer,
-               
               }}
             >
               <Routes>
@@ -89,7 +88,9 @@ const App = () => {
                   path="/AgragarLogistica"
                   element={
                     <ProtectedRoute>
-                      <Inventario />
+                      <AddInventario user={user}
+                        loading={loading}
+                        userTipo={userTipo} />
                     </ProtectedRoute>
                   }
                 />
