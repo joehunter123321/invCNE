@@ -5,13 +5,10 @@ import {
   getFirestore,
   collection,
   getDocs,
-  query,
-  where,
   doc,
-  updateDoc,
   setDoc,
   getDoc,
-  deleteDoc,
+  onSnapshot,
 } from "firebase/firestore";
 const { Panel } = Collapse;
 
@@ -47,7 +44,7 @@ const MyAccordion = (user) => {
       await setDoc(documentRef, values);
 
       formInstances[subcategory].resetFields();
-      message.success(subCategoria+" Agregado Correctamente");
+      message.success(subCategoria + " Agregado Correctamente");
       // Verificar si formRef existe antes de restablecer los campos  formRef?.current?.resetFields();
     } catch (error) {
       message.error(error);
@@ -56,27 +53,25 @@ const MyAccordion = (user) => {
 
   //get firestore funcional useEffect
   useEffect(() => {
-    const fetchTodoCategorias = async () => {
-      try {
-        const db = getFirestore();
-        const querySnapshot = await getDocs(collection(db, "Categorias"));
-        const dataCategorias = [];
-
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          dataCategorias.push({
-            id: doc.id,
-            ...doc.data(),
-          });
+    const db = getFirestore();
+    const unsubscribe = onSnapshot(collection(db, "Categorias"), (snapshot) => {
+      const dataCategorias = [];
+  
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        dataCategorias.push({
+          id: doc.id,
+          ...data,
         });
-
-        setCategoriasFirebase(dataCategorias);
-      } catch (error) {
-        console.error("Error fetching TodoInventario collection:", error);
-      }
+      });
+  
+      setCategoriasFirebase(dataCategorias);
+    });
+  
+    return () => {
+      // Se debe realizar la limpieza del listener cuando el componente se desmonte
+      unsubscribe();
     };
-
-    fetchTodoCategorias();
   }, []);
   // El segundo argumento [] asegura que este efecto se ejecute solo una vez
   const handleSetIdScannerValue = (value, subcategory) => {
@@ -96,7 +91,7 @@ const MyAccordion = (user) => {
   const handlePanelChange = (subcategoryId) => {
     setSelectedSubcategory(subcategoryId);
   };
-
+console.log ("child",CategoriasFirebase)
   return (
     <div>
       <div>
@@ -113,7 +108,7 @@ const MyAccordion = (user) => {
         <h1>Inventario</h1>
 
         {CategoriasFirebase.length > 0 ? (
-          <Collapse accordion>
+          <Collapse accordion style={{ margin: "5%" }}>
             {CategoriasFirebase.map((category) => (
               <Panel header={category.id} key={category.id}>
                 <Collapse accordion onChange={handlePanelChange}>

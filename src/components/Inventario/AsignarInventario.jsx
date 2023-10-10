@@ -66,7 +66,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
   };
 
   const [searchValue, setSearchValue] = useState("");
-  const [filterBy, setFilterBy] = useState("IDscanner");
+  const [filterBy, setFilterBy] = useState("IDScanner");
   const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -78,7 +78,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
 
 
   const onFinish = (values, record) => {
-    handleUpdate(record.IDscanner, nameSelected);
+    handleUpdate(record.IDScanner, nameSelected);
     setModalVisible(false);
     form.resetFields();
   };

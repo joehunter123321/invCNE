@@ -30,6 +30,8 @@ import CustomFooter from "./components/Footer/CustomFooter";
 import AddMaletas from "./components/Inventario/AddMaletas";
 import BuscarMaletas from "./components/Inventario/BuscarMaletas";
 import AddInventario from "./components/Inventario/AddInventario";
+import DynamicFieldsForm from "./components/Inventario/DynamicFieldsForm";
+import CustomForm from "./components/Inventario/CustomForm";
 export const ColorContext = createContext();
 
 const { Header, Content, Footer } = Layout;
@@ -119,15 +121,10 @@ const App = () => {
                   }
                 />
                 <Route
-                  path="/AsignarInventario"
+                  path="/Test"
                   element={
-                    <ProtectedRoute>
-                      <AsignarInventario
-                        user={user}
-                        loading={loading}
-                        userTipo={userTipo}
-                      />
-                    </ProtectedRoute>
+                    <div> <DynamicFieldsForm/> <CustomForm/> </div>
+                   
                   }
                 />
 

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Input } from 'antd';
+import { Button, Input, Form } from 'antd';
 
 const DynamicFieldsForm = () => {
-  const [fields, setFields] = useState([]);
+  const [fields, setFields] = useState([
+    { key: "Categoría", value: "" },
+    { key: "Subcategoría", value: "" },
+  ]);
 
   const handleAddFields = () => {
     const newFields = [...fields];
@@ -36,31 +39,62 @@ const DynamicFieldsForm = () => {
     console.log(formData);
   };
 
-
   return (
-    <div>
+    <Form onFinish={handleSubmit}>
       {fields.map((field, index) => (
         <div key={index}>
-          <Input
-            value={field.key}
-            onChange={(e) => handleChangeKey(index, e.target.value)}
-            style={{ marginRight: 8 }}
-          />
-          <Input
-            value={field.value}
-            onChange={(e) => handleInputChange(index, e)}
-            style={{ marginRight: 8 }}
-          />
-          {index > 0 && (
-            <Button onClick={() => handleRemoveFields(index)}>Remove</Button>
+          {index < 2 ? (
+            <Form.Item
+              label={field.key}
+              name={`field-${index}`}
+              key={index}
+              rules={[
+                {
+                  required: true,
+                  message: `Please input ${field.key}!`,
+                },
+              ]}
+            >
+              <Input
+                value={field.value}
+                onChange={(e) => handleInputChange(index, e)}
+              />
+            </Form.Item>
+          ) : (
+            <>
+              <Form.Item
+                label="Propiedad"
+                name={`key_${index}`}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter the field name",
+                  },
+                ]}
+              >
+                <Input
+                  value={field.key}
+                  onChange={(e) => handleChangeKey(index, e.target.value)}
+                />
+              </Form.Item>
+          
+              <Button onClick={() => handleRemoveFields(index)}>Remove</Button>
+            </>
           )}
         </div>
       ))}
-      <Button onClick={handleAddFields}>Add Field</Button>
-      <Button type="primary" onClick={handleSubmit}>
-        Submit
-      </Button>
-    </div>
+      <Form.Item
+        wrapperCol={{
+          offset: 8,
+          span: 16,
+        }}
+      >
+        <Button onClick={handleAddFields}>Add Field</Button>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
 

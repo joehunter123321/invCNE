@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MailOutlined, SettingOutlined, MenuOutlined } from "@ant-design/icons";
+import { MailOutlined, FileAddOutlined, MenuOutlined,SearchOutlined } from "@ant-design/icons";
 import { Menu, Drawer, Button, Spin } from "antd";
 import Logo from "../../assets/images/logo.jpg";
 import { getAuth, signOut } from "firebase/auth";
@@ -16,9 +16,9 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
   const items = [
     user
       ? {
-          label: "1",
+          label: "Agregar",
           key: "SubMenu1",
-          icon: <SettingOutlined />,
+          icon: <FileAddOutlined />,
           children: [
             {
               type: "group",
@@ -33,9 +33,9 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
       : null,
     user
       ? {
-          label: "2",
+          label: "Buscar",
           key: "SubMenu2",
-          icon: <SettingOutlined />,
+          icon: <SearchOutlined />,
           children: [
             {
               type: "group",
@@ -49,7 +49,7 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
         }
       : null,
     ...(user && userType === "Admin"
-      ? [{ label: "Asignar", key: "Asignar", icon: <MailOutlined /> }]
+      ? [{ label: "Test", key: "Test", icon: <MailOutlined /> }]
       : []),
     { label: user ? "LogOut" : "Login", key: "LogOut" },
   ];
@@ -131,7 +131,7 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
           loading ? (
             <Spin size="large" />
           ) : (
-            <div style={{ alignSelf: "flex-end" }}>
+            <div style={{ alignSelf: "flex-end" ,minWidth:"390px" }}>
               <Menu
                 onClick={onClick}
                 selectedKeys={[current]}

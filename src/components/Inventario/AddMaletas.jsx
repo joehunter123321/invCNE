@@ -25,32 +25,14 @@ const AddMaletas = () => {
   const { user } = useUserAuth(); // Access and use user data as needed
 
   const [form] = Form.useForm();
-  const [values, setValues] = useState({});
+  const [valuesChecks, setValues] = useState({});
   const [searchValue, setSearchValue] = useState("");
   const childRef = useRef(null);
-
+  const [Checks, setChecks] = useState({});
   const onFinish = async (values, formId, formRef) => {
-    console.log("values.user:", user.Identidad);
+    setValues(values);
+
     values.IDScanner = searchValue; // Set the value of IDScanner to searchValue
-
-    console.log("values.values:", values);
-
-    form.setFieldsValue({
-      IDScanner: "",
-    });
-    setSearchValue("");
-    if (!values.BloqueCheck) {
-      form.setFieldsValue({ Bloque: "" });
-    }
-    if (!values.GondolaCheck) {
-      form.setFieldsValue({ Gondola: "" });
-    }
-    if (!values.LadoCheck) {
-      form.setFieldsValue({ Lado: "" });
-    }
-    if (!values.NivelCheck) {
-      form.setFieldsValue({ Nivel: "" });
-    }
 
     try {
       const db = getFirestore();
@@ -61,7 +43,7 @@ const AddMaletas = () => {
       // Verificar si el documento existe
       const documentSnapshot = await getDoc(documentRef);
       if (documentSnapshot.exists()) {
-        message.error("El documento con la ID especificada ya existe");
+        message.error("ID especificada ya existe");
         return; // Retorna sin crear el documento
       }
 
@@ -76,8 +58,28 @@ const AddMaletas = () => {
       values.InventariadoPorUserIDentidad = user.Identidad;
 
       await setDoc(documentRef, values);
-      console.log("Document written with ID:", documentRef.id);
-      message.success(`searchValue: ${searchValue}`);
+
+      message.success(`Guardado Correctamente`);
+
+      console.log("valuesChecks:", Checks);
+      console.log("valuesChecks:", Checks.BloqueCheck);
+      form.setFieldsValue({
+        IDScanner: "",
+      });
+
+      setSearchValue("");
+      if (!Checks.BloqueCheck) {
+        form.setFieldsValue({ Bloque: "" });
+      }
+      if (!Checks.GondolaCheck) {
+        form.setFieldsValue({ Gondola: "" });
+      }
+      if (!Checks.LadoCheck) {
+        form.setFieldsValue({ Lado: "" });
+      }
+      if (!Checks.NivelCheck) {
+        form.setFieldsValue({ Nivel: "" });
+      }
     } catch (error) {
       console.error("Error adding document:", error);
     }
@@ -99,6 +101,16 @@ const AddMaletas = () => {
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   };
+
+  const onChange = (e) => {
+    const { name, checked } = e.target;
+    setChecks((prevSelectedValues) => ({
+      ...prevSelectedValues,
+      [name]: checked,
+    }));
+  };
+
+  console.log(" Checks", Checks);
 
   return (
     <div style={{ height: "100vh", paddingTop: "5%" }}>
@@ -126,7 +138,7 @@ const AddMaletas = () => {
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           style={{ maxWidth: 600 }}
-          initialValues={{ remember: true }}
+          //initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -137,7 +149,7 @@ const AddMaletas = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your password!",
+                message: "Please input IDScanner!",
               },
             ]}
           >
@@ -166,8 +178,16 @@ const AddMaletas = () => {
                 </Form.Item>
               </Col>
               <Col span={4}>
-                <Form.Item name="GondolaCheck" valuePropName="checked">
-                  <Checkbox></Checkbox>
+                <Form.Item
+                  style={{
+                    paddingLeft: "20px",
+                  }}
+                  name="GondolaCheck"
+                  valuePropName="checked"
+                >
+                  <Checkbox name="GondolaCheck" onChange={onChange}>
+                    Recordar
+                  </Checkbox>
                 </Form.Item>
               </Col>
             </Row>
@@ -193,8 +213,16 @@ const AddMaletas = () => {
                 </Form.Item>
               </Col>
               <Col span={4}>
-                <Form.Item name="LadoCheck" valuePropName="checked">
-                  <Checkbox></Checkbox>
+                <Form.Item
+                  style={{
+                    paddingLeft: "20px",
+                  }}
+                  name="LadoCheck"
+                  valuePropName="checked"
+                >
+                  <Checkbox name="LadoCheck" onChange={onChange}>
+                    Recordar
+                  </Checkbox>
                 </Form.Item>
               </Col>
             </Row>
@@ -224,8 +252,16 @@ const AddMaletas = () => {
                 </Form.Item>
               </Col>
               <Col span={4}>
-                <Form.Item name="BloqueCheck" valuePropName="checked">
-                  <Checkbox></Checkbox>
+                <Form.Item
+                  style={{
+                    paddingLeft: "20px",
+                  }}
+                  name="BloqueCheck"
+                  valuePropName="checked"
+                >
+                  <Checkbox name="BloqueCheck" onChange={onChange}>
+                    Recordar
+                  </Checkbox>
                 </Form.Item>
               </Col>
             </Row>
@@ -253,8 +289,16 @@ const AddMaletas = () => {
                 </Form.Item>
               </Col>
               <Col span={4}>
-                <Form.Item name="NivelCheck" valuePropName="checked">
-                  <Checkbox></Checkbox>
+                <Form.Item
+                  style={{
+                    paddingLeft: "20px",
+                  }}
+                  name="NivelCheck"
+                  valuePropName="checked"
+                >
+                  <Checkbox name="NivelCheck" onChange={onChange}>
+                    Recordar
+                  </Checkbox>
                 </Form.Item>
               </Col>
             </Row>
