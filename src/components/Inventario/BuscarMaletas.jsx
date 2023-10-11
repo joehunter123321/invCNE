@@ -76,11 +76,42 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
         });
       });
 
-      // Agregar columna IDscanner como primera columna
-      const indexOfIDscanner = fieldNames.indexOf("IDScanner");
-      if (indexOfIDscanner !== -1) {
-        fieldNames.splice(indexOfIDscanner, 1);
+      // Agregar columna IDScanner como primera columna
+      const indexOfIDScanner = fieldNames.indexOf("IDScanner");
+      if (indexOfIDScanner !== -1) {
+        fieldNames.splice(indexOfIDScanner, 1);
         fieldNames.unshift("IDScanner");
+      }
+
+      //////////
+      const indexOfSegundaColumna = fieldNames.indexOf("Gondola");
+
+      if (indexOfSegundaColumna !== -1) {
+        fieldNames.splice(indexOfSegundaColumna, 1);
+        fieldNames.splice(1, 0, "Gondola"); // Insertar como la segunda columna
+      }
+      // Agregar tercera columna
+      const indexOfTerceraColumna = fieldNames.indexOf("Lado");
+
+      if (indexOfTerceraColumna !== -1) {
+        fieldNames.splice(indexOfTerceraColumna, 1);
+        fieldNames.splice(2, 0, "Lado"); // Insertar como la tercera columna
+      }
+
+      // Agregar cuarta columna
+      const indexOfCuartaColumna = fieldNames.indexOf("Bloque");
+
+      if (indexOfCuartaColumna !== -1) {
+        fieldNames.splice(indexOfCuartaColumna, 1);
+        fieldNames.splice(3, 0, "Bloque"); // Insertar como la tercera columna
+      }
+
+      // Agregar Quinta columna
+      const indexOfQuintaColumna = fieldNames.indexOf("Nivel");
+
+      if (indexOfQuintaColumna !== -1) {
+        fieldNames.splice(indexOfQuintaColumna, 1);
+        fieldNames.splice(4, 0, "Nivel"); // Insertar como la tercera columna
       }
 
       const dynamicColumns = fieldNames.map((fieldName) => ({
@@ -111,7 +142,6 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
           render: (values, record) => (
             <>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Button onClick={() => setModalVisible(true)}>Asignar</Button>
                 <Button
                   style={{ background: "yellow" }}
                   onClick={() => handleEdit(record)}
@@ -119,7 +149,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
                   Editar
                 </Button>
                 <Popconfirm
-                  title="Sure to delete?"
+                  title="¿Seguro de eliminarlo??"
                   onConfirm={() => handleDelete(record.IDScanner)}
                 >
                   <Button type="primary" danger>
@@ -145,7 +175,6 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
     setSearchValue(childData);
   }
   const handleEdit = (record) => {
-    const id = record.IDScanner
     delete record.id;
     if (record.hasOwnProperty("IDScanner")) {
       const { IDScanner, ...rest } = record;
@@ -154,7 +183,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
         ...rest,
       };
       console.log(reorderedRecord);
-      setEditItemId(id);
+      setEditItemId(record.IDScanner);
       setEditData(reorderedRecord);
       setModalVisible(true);
     }
@@ -164,6 +193,18 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
     // Use the updated modalVisible value here in the parent
     if (isVisible) {
       setModalVisible(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const db = getFirestore();
+      const documentRef = doc(collection(db, "Gondolas"), id);
+      await deleteDoc(documentRef);
+      setData((prevData) => prevData.filter((item) => item.IDScanner !== id));
+      message.warning("Eliminado)");
+    } catch (error) {
+      message.error("Error al Eliminar");
     }
   };
   return (
@@ -183,7 +224,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
         placeholder="Enter search value"
       />
       <Select value={filterBy} onChange={handleFilterChange}>
-        <Option value="IDscanner">IDscanner</Option>
+        <Option value="IDScanner">IDScanner</Option>
         <Option value="InventariadoPorUserEmail">Correo</Option>
       </Select>
 
@@ -200,7 +241,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
         filename="myfile"
         extension=".csv"
         separator=";"
-        wrapColumnChar="'"
+        wrapColumnChar=""
         columns={columnsCsv}
         datas={data}
       >

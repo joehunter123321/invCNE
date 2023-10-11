@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Modal } from "antd";
+import { Form, Input, Button, Modal, message } from "antd";
 import {
   getFirestore,
   collection,
@@ -31,7 +31,6 @@ const ModalEditarMaletas = ({ visible, values, onClose, onModalVisible }) => {
 
   const handleCancel = () => {
     setModalVisible(onModalVisible);
-
   };
 
   const handleOk = (formValues) => {
@@ -42,6 +41,8 @@ const ModalEditarMaletas = ({ visible, values, onClose, onModalVisible }) => {
   };
 
   const onFinish = async (formValues) => {
+    const id = values.IDScanner;
+
     try {
       console.log("values.user:", user.Identidad);
       console.log("values.user:", user.user.email);
@@ -50,34 +51,24 @@ const ModalEditarMaletas = ({ visible, values, onClose, onModalVisible }) => {
       const MaletaDocRef = doc(collection(db, "Gondolas"), id);
 
       // Update field1 field in the document
-      await updateDoc(MaletaDocRef, {
-        formValues
-      });
+      await updateDoc(MaletaDocRef, formValues);
+      message.info("Actualizado ");
 
       // Save the updated NOMBREASIGNADO value to "Asignado" collection
-      const assignedDocRef = doc(
+      const HistorialEdicionesDocRef = doc(
         collection(MaletaDocRef, "HistorialEdiciones")
       );
 
-      await setDoc(assignedDocRef, {
+      await setDoc(HistorialEdicionesDocRef, {
         EditadoPorIdentidad: user.Identidad,
         EditadoPorNombre: user.Nombre,
-        FechaAsignado: new Date().toISOString(),
+        FechaEditado: new Date().toISOString(),
       });
-
-      setData((prevData) =>
-        prevData.map((item) => {
-          if (item.IDscanner === id) {
-            // Merge the new data with the existing item
-            return { ...item, ...NOMBREASIGNADO.NOMBREASIGNADO };
-          }
-          return item;
-        })
-      );
     } catch (error) {
+      message.info("Error al Actualizar ", error);
       console.error("Error updating document:", error);
     }
-    console.log(formValues);
+
     setModalVisible(false);
     // Puedes manejar la acción de envío de datos aquí
     // 'formValues' contendrá los valores actualizados del formulario
@@ -111,9 +102,7 @@ const ModalEditarMaletas = ({ visible, values, onClose, onModalVisible }) => {
             </Button>
           </Form.Item>
         </Form>
-      ) : (
-        <h1>sss</h1>
-      )}
+      ) : null}
     </Modal>
   );
 };

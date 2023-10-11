@@ -16,7 +16,7 @@ function Inventario(user) {
 
     try {
       const db = getFirestore();
-      const id = values.IDscanner;
+      const id = values.IDScanner;
       const subCategoria = formRef.current.__INTERNAL__.name;
       const documentRef = doc(collection(db, `Inventario`), id);
 
@@ -50,9 +50,9 @@ function Inventario(user) {
 
   const form1Fields = [
     {
-      name: "IDscanner",
+      name: "IDScanner",
       label: "ID",
-      rules: [{ required: true, message: "IDscanner is required" }],
+      rules: [{ required: true, message: "IDScanner is required" }],
     },
     {
       name: "Procesador",
@@ -79,9 +79,9 @@ function Inventario(user) {
 
   const form2Fields = [
     {
-      name: "IDscanner",
+      name: "IDScanner",
       label: "ID",
-      rules: [{ required: true, message: "IDscanner is required" }],
+      rules: [{ required: true, message: "IDScanner is required" }],
     },
     {
       name: "field2",
@@ -94,9 +94,9 @@ function Inventario(user) {
 
   const form3Fields = [
     {
-      name: "IDscanner",
+      name: "IDScanner",
       label: "ID",
-      rules: [{ required: true, message: "IDscanner is required" }],
+      rules: [{ required: true, message: "IDScanner is required" }],
     },
 
     {
@@ -109,9 +109,9 @@ function Inventario(user) {
 
   const form4Fields = [
     {
-      name: "IDscanner",
+      name: "IDScanner",
       label: "ID",
-      rules: [{ required: true, message: "IDscanner is required" }],
+      rules: [{ required: true, message: "IDScanner is required" }],
     },
     {
       name: "field4",

@@ -91,7 +91,7 @@ const MyAccordion = (user) => {
   const handlePanelChange = (subcategoryId) => {
     setSelectedSubcategory(subcategoryId);
   };
-console.log ("child",CategoriasFirebase)
+
   return (
     <div>
       <div>

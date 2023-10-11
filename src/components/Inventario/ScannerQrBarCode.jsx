@@ -57,8 +57,13 @@ const ScannerQrBarCode = React.forwardRef((props, ref) => {
         <FloatButton
           onClick={stopQrCodeScanner}
           icon={<CloseCircleTwoTone twoToneColor="red" />}
+          shape="square"
           style={{
-            right: 24,
+            right: 40,
+            bottom: 100, // Cambia la posición vertical
+            width: "70px", // Tamaño cuadrado personalizado
+            height: "50px",
+            borderRadius: "0", // Hacerlo cuadrado
           }}
         >
           Cancelar Scaneo
@@ -68,19 +73,29 @@ const ScannerQrBarCode = React.forwardRef((props, ref) => {
           {scanMethod === "computer" ? (
             <FloatButton
               onClick={() => startQrCodeScanner("environment")}
+              shape="square"
               icon={<SecurityScanTwoTone />}
               description="SCAN"
               style={{
-                right: 24,
+                right: 40,
+                bottom: 100, // Cambia la posición vertical
+                width: "70px", // Tamaño cuadrado personalizado
+                height: "50px",
+                borderRadius: "0", // Hacerlo cuadrado
               }}
             ></FloatButton>
           ) : (
             <FloatButton
               onClick={() => startQrCodeScanner("environment")}
+              shape="square"
               icon={<SecurityScanTwoTone />}
               description="SCAN"
               style={{
-                right: 24,
+                right: 40,
+                bottom: 100, // Cambia la posición vertical
+                width: "70px", // Tamaño cuadrado personalizado
+                height: "50px",
+                borderRadius: "0", // Hacerlo cuadrado
               }}
             >
               Scan (Mobile)

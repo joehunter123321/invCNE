@@ -191,13 +191,13 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
   };
 
   const [searchValue, setSearchValue] = useState("");
-  const [filterBy, setFilterBy] = useState("IDscanner");
+  const [filterBy, setFilterBy] = useState("IDScanner");
 
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
 
   const onFinish = (values, record) => {
-    handleUpdate(record.IDscanner, nameSelected);
+    handleUpdate(record.IDScanner, nameSelected);
     setModalVisible(false);
     form.resetFields();
   };
@@ -278,9 +278,9 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
   const columns = [
     // Customize columns based on your data requirements
     {
-      title: "IDscanner",
-      dataIndex: "IDscanner",
-      key: "IDscanner",
+      title: "IDScanner",
+      dataIndex: "IDScanner",
+      key: "IDScanner",
       fixed: "left",
       width: 100,
     },
@@ -440,7 +440,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Button
               style={{ background: "yellow" }}
-              onClick={() => handleHistorial(record.IDscanner)}
+              onClick={() => handleHistorial(record.IDScanner)}
             >
               Historial
             </Button>
@@ -451,8 +451,8 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
   ];
   const columns2 = [
     {
-      id: "IDscanner",
-      displayName: "IDscanner",
+      id: "IDScanner",
+      displayName: "IDScanner",
     },
     {
       id: "Categoria",
@@ -517,7 +517,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
             placeholder="Enter search value"
           />
           <Select value={filterBy} onChange={handleFilterChange}>
-            <Option value="IDscanner">IDscanner</Option>
+            <Option value="IDScanner">IDScanner</Option>
             <Option value="InventariadoPorUserEmail">Correo</Option>
           </Select>
 
@@ -525,7 +525,7 @@ function MostrarInventario({ user, loading, userTipo, childData }) {
           <Table
             bordered
             scroll={{ x: 600 }}
-            rowKey={(record) => record.IDscanner}
+            rowKey={(record) => record.IDScanner}
             dataSource={isFiltered ? filteredData : data}
             columns={columns}
           />

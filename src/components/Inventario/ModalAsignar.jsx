@@ -76,7 +76,7 @@ const ModalAsignar = ({
        message.success( "Asignado Correctamente a : "+ nameSelected );
       setData((prevData) =>
         prevData.map((item) => {
-          if (item.IDscanner === id) {
+          if (item.IDScanner === id) {
             // Merge the new data with the existing item
             return { ...item, ...NOMBREASIGNADO.NOMBREASIGNADO };
           }

@@ -25,14 +25,14 @@ function MostrarInventario() {
   }, []);
 
   const columns = [
-    { title: "IDscanner", dataIndex: "IDscanner", key: "IDscanner" },
+    { title: "IDScanner", dataIndex: "IDScanner", key: "IDScanner" },
     { title: "Categoria", dataIndex: "Categoria", key: "Categoria" },
     { title: "field1", dataIndex: "field1", key: "field1" },
   ];
   const columns2 = [
     {
-      id: "IDscanner",
-      displayName: "IDscanner",
+      id: "IDScanner",
+      displayName: "IDScanner",
     },
     {
       id: "Categoria",
@@ -49,7 +49,7 @@ function MostrarInventario() {
       <Table
         dataSource={data}
         columns={columns}
-        rowKey={(record) => record.IDscanner}
+        rowKey={(record) => record.IDScanner}
       />
 
       <CsvDownloader

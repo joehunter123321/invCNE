@@ -7,6 +7,8 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false); // Estado para controlar el estado de carga del formulario
   const auth = getAuth();
+
+
   const onFinish = async (values) => {
     setLoading(true);
     try {
@@ -17,7 +19,7 @@ const Login = () => {
       );
       console.log("User logged in:", user);
       setLoading(false);
-      navigate("/Inventario"); // Redirigir al usuario a /Pedidos después de iniciar sesión
+      navigate("AgregarMaletas"); // Redirigir al usuario a /AgregarMaletas después de iniciar sesión
     } catch (error) {
       console.error("Error logging in:", error);
       setLoading(false);

@@ -16,7 +16,7 @@ function Inventario() {
   const handleSubmit = async (values, formId, formRef) => {
     try {
       const db = getFirestore();
-      const id = values.IDscanner;
+      const id = values.IDScanner;
       const Correo = user.email;
       const documentRef = doc(collection(db, "InventarioCompleto"), id);
       values.Categoria = formId;
@@ -38,9 +38,9 @@ function Inventario() {
 
   const form1Fields = [
     {
-      name: "IDscanner",
-      label: "IDscanner",
-      rules: [{ required: true, message: "IDscanner is required" }],
+      name: "IDScanner",
+      label: "IDScanner",
+      rules: [{ required: true, message: "IDScanner is required" }],
     },
     {
       name: "field1",

@@ -13,7 +13,7 @@ const { Option } = Select;
 
 function MostrarInventarioAD({ user, loading, userTipo }) {
   const [searchValue, setSearchValue] = useState("");
-  const [filterBy, setFilterBy] = useState("IDscanner");
+  const [filterBy, setFilterBy] = useState("IDScanner");
   const [data, setData] = useState([]);
 
   const handleSearchChange = (event) => {
@@ -43,7 +43,7 @@ function MostrarInventarioAD({ user, loading, userTipo }) {
       const db = getFirestore();
       const documentRef = doc(collection(db, "Inventario"), id);
       await deleteDoc(documentRef);
-      setData((prevData) => prevData.filter((item) => item.IDscanner !== id));
+      setData((prevData) => prevData.filter((item) => item.IDScanner !== id));
     } catch (error) {
       console.error("Error deleting element:", error);
     }
@@ -51,7 +51,7 @@ function MostrarInventarioAD({ user, loading, userTipo }) {
 
   const columns = [
     // Customize columns based on your data requirements
-    { title: "IDscanner", dataIndex: "IDscanner", key: "IDscanner" },
+    { title: "IDScanner", dataIndex: "IDScanner", key: "IDScanner" },
     { title: "Correo", dataIndex: "Correo", key: "Correo" },
     {
       title: "Actions",
@@ -59,8 +59,8 @@ function MostrarInventarioAD({ user, loading, userTipo }) {
       key: "actions",
       render: (_, record) => (
         <Popconfirm
-          title="Sure to delete?"
-          onConfirm={() => handleDelete(record.IDscanner)}
+          title="¿Seguro de eliminarlo??"
+          onConfirm={() => handleDelete(record.IDScanner)}
         >
           <Button type="primary" danger>
             Delete
@@ -71,8 +71,8 @@ function MostrarInventarioAD({ user, loading, userTipo }) {
   ];
   const columns2 = [
     {
-      id: "IDscanner",
-      displayName: "IDscanner",
+      id: "IDScanner",
+      displayName: "IDScanner",
     },
     {
       id: "Categoria",
@@ -94,14 +94,14 @@ function MostrarInventarioAD({ user, loading, userTipo }) {
             placeholder="Enter search value"
           />
           <Select value={filterBy} onChange={handleFilterChange}>
-            <Option value="IDscanner">IDscanner</Option>
+            <Option value="IDScanner">IDScanner</Option>
             <Option value="Correo">Correo</Option>
           </Select>
           <Button type="primary" onClick={handleSearch}>
             Search
           </Button>
           <Table
-            rowKey={(record) => record.IDscanner}
+            rowKey={(record) => record.IDScanner}
             dataSource={data}
             columns={columns}
           />

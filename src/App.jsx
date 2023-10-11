@@ -32,6 +32,7 @@ import BuscarMaletas from "./components/Inventario/BuscarMaletas";
 import AddInventario from "./components/Inventario/AddInventario";
 import DynamicFieldsForm from "./components/Inventario/DynamicFieldsForm";
 import CustomForm from "./components/Inventario/CustomForm";
+import MostrarMaletaTotal from "./components/Inventario/MostrarMaletaTotal";
 export const ColorContext = createContext();
 
 const { Header, Content, Footer } = Layout;
@@ -43,8 +44,6 @@ const App = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-
-  console.log("Loading", loading);
 
   ////////////////////////////////
 
@@ -82,7 +81,7 @@ const App = () => {
                   path="/AgregarMaletas"
                   element={
                     <ProtectedRoute>
-                      <AddMaletas />
+                      <AddMaletas user={user} loading={loading} userTipo={userTipo} />
                     </ProtectedRoute>
                   }
                 />
@@ -90,9 +89,11 @@ const App = () => {
                   path="/AgragarLogistica"
                   element={
                     <ProtectedRoute>
-                      <AddInventario user={user}
+                      <AddInventario
+                        user={user}
                         loading={loading}
-                        userTipo={userTipo} />
+                        userTipo={userTipo}
+                      />
                     </ProtectedRoute>
                   }
                 />
@@ -121,10 +122,21 @@ const App = () => {
                   }
                 />
                 <Route
-                  path="/Test"
+                  path="/AgregarCategorias"
                   element={
-                    <div> <DynamicFieldsForm/>  </div>
-                   
+                    <div>
+                      {" "}
+                      <DynamicFieldsForm />{" "}
+                    </div>
+                  }
+                />
+                <Route
+                  path="/MostrarMaletasTotal"
+                  element={
+                    <div>
+                      {" "}
+                      <MostrarMaletaTotal />{" "}
+                    </div>
                   }
                 />
 

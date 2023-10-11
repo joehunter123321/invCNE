@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MailOutlined, FileAddOutlined, MenuOutlined,SearchOutlined } from "@ant-design/icons";
+import {
+  LockOutlined,
+  FileAddOutlined,
+  MenuOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import { Menu, Drawer, Button, Spin } from "antd";
 import Logo from "../../assets/images/logo.jpg";
 import { getAuth, signOut } from "firebase/auth";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 const Navbar = ({ user, loading, userTipo, childData }) => {
+  
   const navigate = useNavigate();
   const [current, setCurrent] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuNormal, setmenuNormal] = useState("");
   const [menuResponsive, setmenuResponsive] = useState("");
 
-  const userType = "Admin"; // Replace with your user type logic
+  const userType = userTipo; // Replace with your user type logic
   const location = useLocation();
   const currentPath = location.pathname.substring(1);
   const items = [
-    user
+    user && userType === "Admin" || userType === "Escritura"
       ? {
           label: "Agregar",
           key: "SubMenu1",
@@ -33,7 +39,7 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
           ],
         }
       : null,
-    user
+      user && userType === "Admin" || userType === "Escritura"
       ? {
           label: "Buscar",
           key: "SubMenu2",
@@ -51,16 +57,29 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
         }
       : null,
     ...(user && userType === "Admin"
-      ? [{ label: "Test", key: "Test", icon: <MailOutlined /> }]
+      ? [{ label: "Test",
+           key: "SubMenu3",
+           icon: <LockOutlined />, 
+           children: [
+            {
+              type: "group",
+              label: "Test",
+              children: [
+                { label: "Agregar Categorias", key: "AgregarCategorias" },
+                { label: "Mostrar Maletas Total", key: "MostrarMaletasTotal" },
+              ],
+            },
+          ],
+          }]
       : []),
-    { label: user ? "LogOut" : "Login", key: "LogOut" },
+    { label: user ? "LogOut" : "Login", key: "/" },
   ];
 
   const handleLogout = () => {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        // Sign-out successful.
+        navigate("/");// Sign-out successful.
       })
       .catch((error) => {
         // An error happened.
@@ -102,7 +121,7 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
 
   const onClick = (e) => {
     setCurrent(e.key);
-    if (e.key === "LogOut") {
+    if (e.key === "/") {
       setMenuVisible(false);
       handleLogout();
     } else {
@@ -111,8 +130,7 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
     }
   };
 
-
-console.log ("location",location,currentPath)
+  
   return (
     <div>
       <div
@@ -135,7 +153,7 @@ console.log ("location",location,currentPath)
           loading ? (
             <Spin size="large" />
           ) : (
-            <div style={{ alignSelf: "flex-end" ,minWidth:"390px" }}>
+            <div style={{ alignSelf: "flex-end", minWidth: "390px" }}>
               <Menu
                 onClick={onClick}
                 selectedKeys={currentPath}

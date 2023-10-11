@@ -123,11 +123,11 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
         });
       });
 
-      // Agregar columna IDscanner como primera columna
-      const indexOfIDscanner = fieldNames.indexOf("IDscanner");
-      if (indexOfIDscanner !== -1) {
-        fieldNames.splice(indexOfIDscanner, 1);
-        fieldNames.unshift("IDscanner");
+      // Agregar columna IDScanner como primera columna
+      const indexOfIDScanner = fieldNames.indexOf("IDScanner");
+      if (indexOfIDScanner !== -1) {
+        fieldNames.splice(indexOfIDScanner, 1);
+        fieldNames.unshift("IDScanner");
       }
 
       const dynamicColumns = fieldNames.map((fieldName) => ({
@@ -201,16 +201,16 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
                 </Form>
               </Modal>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Button onClick={() => handleAsignar(record.IDscanner)}>Asignar</Button>
+              <Button onClick={() => handleAsignar(record.IDScanner)}>Asignar</Button>
                 <Button
                   style={{ background: "yellow" }}
-                  onClick={() => handleHistorial(record.IDscanner)}
+                  onClick={() => handleHistorial(record.IDScanner)}
                 >
                   Historial
                 </Button>
                 <Popconfirm
-                  title="Sure to delete?"
-                  onConfirm={() => handleDelete(record.IDscanner)}
+                  title="¿Seguro de eliminarlo??"
+                  onConfirm={() => handleDelete(record.IDScanner)}
                 >
                   <Button type="primary" danger>
                     Eliminar
@@ -236,7 +236,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
       const db = getFirestore();
       const documentRef = doc(collection(db, "Inventario"), id);
       await deleteDoc(documentRef);
-      setData((prevData) => prevData.filter((item) => item.IDscanner !== id));
+      setData((prevData) => prevData.filter((item) => item.IDScanner !== id));
     } catch (error) {
       console.error("Error deleting element:", error);
     }
@@ -270,7 +270,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
 
       setData((prevData) =>
         prevData.map((item) => {
-          if (item.IDscanner === id) {
+          if (item.IDScanner === id) {
             // Merge the new data with the existing item
             return { ...item, ...NOMBREASIGNADO.NOMBREASIGNADO };
           }
@@ -367,7 +367,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
             placeholder="Enter search value"
           />
           <Select value={filterBy} onChange={handleFilterChange}>
-            <Option value="IDscanner">IDscanner</Option>
+            <Option value="IDScanner">IDScanner</Option>
             <Option value="InventariadoPorUserEmail">Correo</Option>
           </Select>
 
@@ -375,7 +375,7 @@ function AsignarInventario({ user, loading, userTipo, childData }) {
           <Table
             bordered
             scroll={{ x: 600 }}
-            rowKey={(record) => record.IDscanner}
+            rowKey={(record) => record.IDScanner}
             dataSource={data}
             columns={columns3}
           />

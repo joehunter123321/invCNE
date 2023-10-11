@@ -120,7 +120,7 @@ const DynamicFieldsForm = () => {
                   rules={[
                     {
                       required: true,
-                      message: `Please input ${field.key}!`,
+                      message: `Por favor Completar ${field.key}!`,
                     },
                   ]}
                 >
