@@ -145,6 +145,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
     setSearchValue(childData);
   }
   const handleEdit = (record) => {
+    const id = record.IDScanner
     delete record.id;
     if (record.hasOwnProperty("IDScanner")) {
       const { IDScanner, ...rest } = record;
@@ -153,7 +154,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
         ...rest,
       };
       console.log(reorderedRecord);
-      setEditItemId(record.IDScanner);
+      setEditItemId(id);
       setEditData(reorderedRecord);
       setModalVisible(true);
     }

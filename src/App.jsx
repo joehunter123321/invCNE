@@ -123,7 +123,7 @@ const App = () => {
                 <Route
                   path="/Test"
                   element={
-                    <div> <DynamicFieldsForm/> <CustomForm/> </div>
+                    <div> <DynamicFieldsForm/>  </div>
                    
                   }
                 />

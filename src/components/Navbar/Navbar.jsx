@@ -4,6 +4,7 @@ import { MailOutlined, FileAddOutlined, MenuOutlined,SearchOutlined } from "@ant
 import { Menu, Drawer, Button, Spin } from "antd";
 import Logo from "../../assets/images/logo.jpg";
 import { getAuth, signOut } from "firebase/auth";
+import { useLocation } from 'react-router-dom';
 const Navbar = ({ user, loading, userTipo, childData }) => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState("");
@@ -12,7 +13,8 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
   const [menuResponsive, setmenuResponsive] = useState("");
 
   const userType = "Admin"; // Replace with your user type logic
-
+  const location = useLocation();
+  const currentPath = location.pathname.substring(1);
   const items = [
     user
       ? {
@@ -109,6 +111,8 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
     }
   };
 
+
+console.log ("location",location,currentPath)
   return (
     <div>
       <div
@@ -134,7 +138,7 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
             <div style={{ alignSelf: "flex-end" ,minWidth:"390px" }}>
               <Menu
                 onClick={onClick}
-                selectedKeys={[current]}
+                selectedKeys={currentPath}
                 mode="horizontal"
                 items={items}
               />
@@ -158,7 +162,7 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
         >
           <Menu
             onClick={onClick}
-            selectedKeys={[current]}
+            selectedKeys={[currentPath]}
             mode="inline"
             items={items}
           />
