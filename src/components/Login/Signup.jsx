@@ -4,46 +4,50 @@ import { Form, Alert, Input, Button, Select, Card } from "antd";
 import { useUserAuth } from "../../auth/UserAuthContext";
 import { collection, setDoc, doc, getDoc } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
+import { useForm } from "antd/lib/form/Form";
+
 const Signup = () => {
-  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-  const [password, setPassword] = useState("");
-  const { signUp } = useUserAuth();
+  const [success, setSuccess] = useState(false);
   let navigate = useNavigate();
+  const { signUp } = useUserAuth();
+  const [form] = useForm();
 
   const onFinish = async (values) => {
-    console.log(values);
     setError("");
     try {
       const { email, password } = values;
 
-      const user = await signUp(email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          console.log(JSON.stringify(user.uid, null, 2));
-          console.log(user.uid);
-          const uid = user.uid;
+      const user = await signUp(email, password).then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(JSON.stringify(user.uid, null, 2));
+        console.log(user.uid);
+        const uid = user.uid;
 
-          const db = getFirestore();
-          const usuariosCollection = collection(db, "Usuario");
-          const usuarioDocRef = doc(usuariosCollection, user.uid);
+        const db = getFirestore();
+        const usuariosCollection = collection(db, "Usuario");
+        const usuarioDocRef = doc(usuariosCollection, user.uid);
 
-          setDoc(usuarioDocRef, {
-            Correo: values.email,
-            Identidad: values.Identidad,
-            Nombre: values.Nombre,
-            Tipo: values.Tipo,
-            uid: user.uid,
-          });
-          // ...
-        })
-        .catch((error) => {
-          console.log(error);
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          // ..
+        setDoc(usuarioDocRef, {
+          Correo: values.email,
+          Identidad: values.Identidad,
+          Nombre: values.Nombre,
+          Tipo: values.Tipo,
+          uid: user.uid,
         });
+
+        // Restablece los campos del formulario a sus valores iniciales
+        form.setFieldsValue({
+          email: "",
+          password: "",
+          Identidad: "",
+          Nombre: "",
+          Tipo: "Admin",
+        });
+        
+        setSuccess(true);
+      });
     } catch (err) {
       setError(err.message);
     }
@@ -62,7 +66,10 @@ const Signup = () => {
         <div className="p-4 box">
           <h2 className="mb-3">Registro</h2>
           {error && <Alert message={error} type="error" showIcon />}
-          <Form name="signup" onFinish={onFinish}>
+          {success && (
+            <Alert message="Registro exitoso" type="success" showIcon />
+          )}
+          <Form form={form} name="signup" onFinish={onFinish}>
             <Form.Item
               label="Email address"
               name="email"
@@ -76,7 +83,6 @@ const Signup = () => {
               <Input
                 type="email"
                 placeholder="Email address"
-                onChange={(e) => setEmail(e.target.value)}
               />
             </Form.Item>
 
@@ -92,7 +98,6 @@ const Signup = () => {
             >
               <Input.Password
                 placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Item>
 
@@ -106,7 +111,9 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input placeholder="Identidad" />
+              <Input
+                placeholder="Identidad"
+              />
             </Form.Item>
 
             <Form.Item
@@ -119,7 +126,9 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input placeholder="Nombre" />
+              <Input
+                placeholder="Nombre"
+              />
             </Form.Item>
 
             <Form.Item

@@ -31,7 +31,7 @@ import MostrarMaletaTotal from "./components/Inventario/MostrarMaletaTotal";
 import Signup from "./components/Login/Signup";
 import CryptoJS from "crypto-js";
 export const ColorContext = createContext();
-const encryptionKey = import.meta.env.VITE_KEYS;
+//const encryptionKey = import.meta.env.VITE_KEYS;
 const { Header, Content, Footer } = Layout;
 
 const App = () => {
@@ -44,7 +44,7 @@ const App = () => {
     const encryptedUserData = localStorage.getItem("userData");
     if (encryptedUserData) {
       try {
-        const bytes = CryptoJS.AES.decrypt(encryptedUserData, encryptionKey);
+        const bytes = CryptoJS.AES.decrypt(encryptedUserData, "kJ&Q1.uaQBR&7rdq4Pk(&e@^d.>h*=H.");
         const decryptedUserData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         return decryptedUserData;
       } catch (error) {

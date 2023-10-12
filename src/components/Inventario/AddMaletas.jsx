@@ -96,6 +96,7 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
       // add  values
       values.InventariadoPorUserEmail = user.user.email;
       values.InventariadoPorUserIDentidad = user.Identidad;
+      values.Lugar = tipoFormulario;
 
       await setDoc(documentRef, values);
 
@@ -158,22 +159,25 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
   };
 
   return (
-    <div style={{ height: "100vh", paddingTop: "5%" }}>
-      <Radio.Group
-        onChange={onChangeRadio}
-        defaultValue={tipoFormulario}
-        style={{
-          marginTop: 16,
-        }}
-      >
-        <Radio.Button value="Configuracion">Campo</Radio.Button>
-        <Radio.Button value="CLE">CLE</Radio.Button>
-      </Radio.Group>
+    <div style={{ height: "100vh", paddingTop: "1%" }}>
       {loading ? (
         <Spin size="large" />
       ) : (
         <div>
           {contextHolder}
+          <div style={{ paddingBottom: "2%" }}>
+            {" "}
+            <Radio.Group
+              onChange={onChangeRadio}
+              defaultValue={tipoFormulario}
+              style={{
+                marginTop: 16,
+              }}
+            >
+              <Radio.Button value="Configuracion">Campo</Radio.Button>
+              <Radio.Button value="CLE">CLE</Radio.Button>
+            </Radio.Group>
+          </div>
           <Card
             hoverable
             title="Formulario Maletas"
@@ -213,13 +217,13 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
                   },
                   {
                     type: "number",
-                    min: 10000,
-                    max: 99999,
+                    min: 1000,
+                    max: 9999,
                     transform: (value) => parseFloat(value),
                     message: "Ingrese un número válido con al menos 5 cifras",
                   },
                   {
-                    max: 5, // Máximo número de caracteres permitidos
+                    max: 4, // Máximo número de caracteres permitidos
                     message: "El campo no puede tener más de 5 caracteres",
                   },
                 ]}

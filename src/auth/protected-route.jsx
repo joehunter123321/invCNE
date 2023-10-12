@@ -16,7 +16,7 @@ const ProtectedRoute = ({ children }) => {
     }
 
     if (
-      !loading &&
+      !loading && 
       userTipo !== "Admin" &&
       userTipo !== "Escritura" &&
       window.location.pathname === "/AgregarMaletass"

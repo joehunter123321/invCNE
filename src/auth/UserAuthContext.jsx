@@ -8,7 +8,7 @@ import {
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { auth } from "../../firebaseConfig";
 import CryptoJS from "crypto-js";
-const encryptionKey = import.meta.env.VITE_KEYS;
+//const encryptionKey = import.meta.env.VITE_KEYS;
 const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
@@ -29,14 +29,14 @@ export function UserAuthContextProvider({ children }) {
     localStorage.setItem("TipoFormulario", "Configuracion");
   }
 
-  console.log("Clave de cifrado segura:", encryptionKey);
+  console.log("Clave de cifrado segura:", "kJ&Q1.uaQBR&7rdq4Pk(&e@^d.>h*=H.");
 
   // Función para almacenar el usuario en localStorage con cifrado
   const storeUserInLocalStorage = (userData) => {
     try {
       const encryptedUserData = CryptoJS.AES.encrypt(
         JSON.stringify(userData),
-        encryptionKey
+        "kJ&Q1.uaQBR&7rdq4Pk(&e@^d.>h*=H."
       ).toString();
       localStorage.setItem("userData", encryptedUserData);
     } catch (error) {
@@ -52,7 +52,10 @@ export function UserAuthContextProvider({ children }) {
     const encryptedUserData = localStorage.getItem("userData");
     if (encryptedUserData) {
       try {
-        const bytes = CryptoJS.AES.decrypt(encryptedUserData, encryptionKey);
+        const bytes = CryptoJS.AES.decrypt(
+          encryptedUserData,
+          "kJ&Q1.uaQBR&7rdq4Pk(&e@^d.>h*=H."
+        );
         const decryptedUserData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         return decryptedUserData;
       } catch (error) {
@@ -85,7 +88,7 @@ export function UserAuthContextProvider({ children }) {
 
   function LoadTipoFormulario(Tipo) {
     console.log(`El tipo de formulario es: ${Tipo}`);
-    setTipoFormulario("Tipo")
+    setTipoFormulario("Tipo");
   }
 
   useEffect(() => {
@@ -158,7 +161,7 @@ export function UserAuthContextProvider({ children }) {
               console.log("Error fetching user document:", error);
             });
         } else {
-          setTipoFormulario("Configuracion")
+          setTipoFormulario("Configuracion");
           console.log(`LoadTipoFormularioData:else`);
           const ConfigRef = doc(db, "Configuracion", "Configuracion");
           getDoc(ConfigRef)

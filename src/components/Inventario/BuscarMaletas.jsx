@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Table,
   Input,
@@ -40,6 +40,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [editItemId, setEditItemId] = useState(null);
   const [editData, setEditData] = useState(null);
+  const [duplicates, setDuplicates] = useState([]);
   ////////
   const handleFilterChange = (value) => {
     setFilterBy(value);
@@ -47,6 +48,31 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   };
+  const findDuplicates = (data) => {
+    const countMap = new Map();
+
+    // Agrupa y cuenta las filas por sus valores en las cuatro columnas
+    data.forEach((row) => {
+      const key = `${row.Gondola}-${row.Lado}-${row.Bloque}-${row.Nivel}`;
+      const count = countMap.get(key) || 0;
+      countMap.set(key, count + 1);
+    });
+
+    // Encuentra las filas duplicadas que se repiten más de dos veces
+    const duplicateRows = [];
+    data.forEach((row) => {
+      const key = `${row.Gondola}-${row.Lado}-${row.Bloque}-${row.Nivel}`;
+      if (countMap.get(key) >= 11) {
+        duplicateRows.push(row.id);
+      }
+    });
+
+    return duplicateRows;
+  };
+  useEffect(() => {
+    const duplicateRows = findDuplicates(data);
+    setDuplicates(duplicateRows);
+  }, [data]);
 
   const handleSearch = async () => {
     try {
@@ -195,7 +221,10 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
       setModalVisible(false);
     }
   };
-
+  const handleFindDuplicates = () => {
+    const duplicateRows = findDuplicates(data);
+    setDuplicates(duplicateRows);
+  };
   const handleDelete = async (id) => {
     try {
       const db = getFirestore();
@@ -226,6 +255,7 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
       <Select value={filterBy} onChange={handleFilterChange}>
         <Option value="IDScanner">IDScanner</Option>
         <Option value="InventariadoPorUserEmail">Correo</Option>
+        <Option value="Lugar">Lugar</Option>
       </Select>
 
       <Button onClick={handleSearch}>Search</Button>
@@ -245,7 +275,26 @@ function BuscarMaletas({ user, loading, userTipo, childData }) {
         columns={columnsCsv}
         datas={data}
       >
-        <Button>Download</Button>
+        <Button>Descargar Datos Filtrados</Button>
+      </CsvDownloader>
+      <Button onClick={handleFindDuplicates}>Buscar Duplicados</Button>
+      <h2>Duplicados:</h2>
+      <Table
+        bordered
+        scroll={{ x: 600 }}
+        rowKey={(record) => record.id}
+        dataSource={data.filter((record) => duplicates.includes(record.id))}
+        columns={columns}
+      />
+      <CsvDownloader
+        filename="myfile"
+        extension=".csv"
+        separator=";"
+        wrapColumnChar=""
+        columns={columnsCsv}
+        datas={data.filter((record) => duplicates.includes(record.id))}
+      >
+        <Button>Descargar Datos Duplicados</Button>
       </CsvDownloader>
       <ModalEditarMaletas
         editItemId={editItemId}

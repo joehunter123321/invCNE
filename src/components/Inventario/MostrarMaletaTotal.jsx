@@ -27,6 +27,41 @@ function MostrarMaletaTotal() {
     };
   }, []);
 
+
+  const checkDuplicate2 = (record, dataIndex, dataSource) => {
+    // Verifica si el valor se repite en las columnas "Gondola", "Torre", "Bloque" y "Nivel".
+    const valueToCheck = record[dataIndex];
+    return dataSource.filter((item) => {
+      return (
+        item.Gondola === valueToCheck &&
+        item.Torre === valueToCheck &&
+        item.Bloque === valueToCheck &&
+        item.Nivel === valueToCheck
+      ).length > 3;
+    }).length > 0
+      ? "highlight-row" // Agrega una clase CSS para resaltar la fila en rojo
+      : "";
+  };
+
+
+  const checkDuplicate = (record, dataIndex, dataSource) => {
+    const valueToCheck = record[dataIndex];
+    const matchingRows = dataSource.filter((item) => {
+      return (
+        item.Gondola === record.Gondola &&
+        item.Lado === record.Lado &&
+        item.Bloque === record.Bloque &&
+        item.Nivel === record.Nivel
+      );
+    });
+  
+    // Excluye la fila actual de las duplicadas.
+    const matchingRowsExcludingCurrent = matchingRows.filter((item) => item.id !== record.id);
+  
+    // Marca la fila como roja solo si se encuentra más de dos veces en el conjunto de datos.
+    return matchingRowsExcludingCurrent.length >= 11 ? { background: "red", color: "white" } : {};
+  };
+
   const columns = [
     {
       title: "IDScanner",
@@ -77,6 +112,9 @@ function MostrarMaletaTotal() {
       sorter: (a, b) => a.Gondola - b.Gondola,
       sortDirections: ["ascend", "descend"],
       width: 100,
+      onCell: (record) => ({
+        style: checkDuplicate(record, "Gondola", dataMaletas),
+      }),
     },
     {
       title: "Torre",
@@ -85,6 +123,9 @@ function MostrarMaletaTotal() {
       sorter: (a, b) => a.Lado.localeCompare(b.Lado),
       sortDirections: ["ascend", "descend"],
       width: 100,
+      onCell: (record) => ({
+        style: checkDuplicate(record, "Lado", dataMaletas),
+      }),
     },
     {
       title: "Bloque",
@@ -93,6 +134,9 @@ function MostrarMaletaTotal() {
       sorter: (a, b) => a.Bloque - b.Bloque,
       sortDirections: ["ascend", "descend"],
       width: 100,
+      onCell: (record) => ({
+        style: checkDuplicate(record, "Bloque", dataMaletas),
+      }),
     },
     {
       title: "Nivel",
@@ -101,6 +145,9 @@ function MostrarMaletaTotal() {
       sorter: (a, b) => a.Nivel - b.Nivel,
       sortDirections: ["ascend", "descend"],
       width: 100,
+      onCell: (record) => ({
+        style: checkDuplicate(record, "Nivel", dataMaletas),
+      }),
     },
     {
       title: "InventariadoPorUserIDentidad",
@@ -132,6 +179,8 @@ function MostrarMaletaTotal() {
   const Total = dataMaletas.length;
   const Datadown = dataMaletas;
   console.log("dataMaletas",dataMaletas)
+
+  
   return (
     <div style={{ height: "100vh", paddingTop: "5%" }}>
       {dataMaletas.length > 0 ? (
