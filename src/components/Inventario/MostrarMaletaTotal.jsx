@@ -32,7 +32,7 @@ function MostrarMaletaTotal() {
       title: "IDScanner",
       dataIndex: "IDScanner",
       key: "IDScanner",
-      width: 100,
+      width: 150,
       sorter: (a, b) => a.IDScanner.localeCompare(b.IDScanner),
       sortDirections: ["ascend", "descend"],
       filterDropdown: ({
@@ -144,7 +144,7 @@ function MostrarMaletaTotal() {
             virtual
             pagination={false}
             columns={columns}
-            scroll={{ x: 900, y: 900 }}
+            scroll={{ x: 900, y: 500 }}
             dataSource={dataMaletas}
             rowKey={(record) => record.IDScanner}
           />

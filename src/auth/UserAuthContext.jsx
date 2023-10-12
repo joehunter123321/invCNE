@@ -12,9 +12,9 @@ const userAuthContext = createContext();
 export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState({});
   const [Nombre, setUserNombre] = useState({});
-   const [loading, setLoading] = useState(true);
-   const [userTipo, setUserTipo] = useState(null);
-   const [userIdentidad, setUserIdentidad] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [userTipo, setUserTipo] = useState(null);
+  const [userIdentidad, setUserIdentidad] = useState(null);
 
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
@@ -23,6 +23,7 @@ export function UserAuthContextProvider({ children }) {
     return createUserWithEmailAndPassword(auth, email, password);
   }
   function logOut() {
+    setLoading(false);
     return signOut(auth);
   }
 
@@ -39,19 +40,19 @@ export function UserAuthContextProvider({ children }) {
           .then((doc) => {
             if (doc.exists()) {
               const Tipo = doc.data().Tipo;
-              const Identidad=doc.data().Identidad;
-              const Nombre=doc.data().Nombre;
+              const Identidad = doc.data().Identidad;
+              const Nombre = doc.data().Nombre;
               const userData = {
                 user: currentUser,
                 Tipo: Tipo,
                 Identidad: Identidad,
-                Nombre: Nombre
+                Nombre: Nombre,
               };
               setUser(userData);
-              setLoading(false); 
-              setUserTipo(Tipo); 
-              setUserIdentidad(userIdentidad);  
-              setUserNombre(Nombre); 
+              setLoading(false);
+              setUserTipo(Tipo);
+              setUserIdentidad(userIdentidad);
+              setUserNombre(Nombre);
             } else {
               console.log("User document does not exist");
             }
@@ -61,6 +62,7 @@ export function UserAuthContextProvider({ children }) {
           });
       } else {
         console.log("User is signed out");
+        setLoading(false);
       }
     });
 
@@ -70,7 +72,18 @@ export function UserAuthContextProvider({ children }) {
   }, []);
 
   return (
-    <userAuthContext.Provider value={{ user, logIn, signUp, logOut ,loading,userTipo,userIdentidad,Nombre}}>
+    <userAuthContext.Provider
+      value={{
+        user,
+        logIn,
+        signUp,
+        logOut,
+        loading,
+        userTipo,
+        userIdentidad,
+        Nombre,
+      }}
+    >
       {children}
     </userAuthContext.Provider>
   );

@@ -11,7 +11,8 @@ import Logo from "../../assets/images/logo.jpg";
 import { getAuth, signOut } from "firebase/auth";
 import { useLocation } from "react-router-dom";
 const Navbar = ({ user, loading, userTipo, childData }) => {
-  
+  console.log("navbar", loading);
+
   const navigate = useNavigate();
   const [current, setCurrent] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
@@ -22,7 +23,9 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
   const location = useLocation();
   const currentPath = location.pathname.substring(1);
   const items = [
-    user && userType === "Admin" || userType === "Escritura"
+    (user && userType === "Admin") ||
+    userType === "Escritura" ||
+    userType === "Lectura"
       ? {
           label: "Agregar",
           key: "SubMenu1",
@@ -39,7 +42,7 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
           ],
         }
       : null,
-      user && userType === "Admin" || userType === "Escritura"
+    (user && userType === "Admin") || userType === "Lectura"
       ? {
           label: "Buscar",
           key: "SubMenu2",
@@ -57,20 +60,27 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
         }
       : null,
     ...(user && userType === "Admin"
-      ? [{ label: "Test",
-           key: "SubMenu3",
-           icon: <LockOutlined />, 
-           children: [
-            {
-              type: "group",
-              label: "Test",
-              children: [
-                { label: "Agregar Categorias", key: "AgregarCategorias" },
-                { label: "Mostrar Maletas Total", key: "MostrarMaletasTotal" },
-              ],
-            },
-          ],
-          }]
+      ? [
+          {
+            label: "Test",
+            key: "SubMenu3",
+            icon: <LockOutlined />,
+            children: [
+              {
+                type: "group",
+                label: "Test",
+                children: [
+                  { label: "Agregar Categorias", key: "AgregarCategorias" },
+                  {
+                    label: "Mostrar Maletas Total",
+                    key: "MostrarMaletasTotal",
+                  },
+                  { label: "Registro", key: "Registro" },
+                ],
+              },
+            ],
+          },
+        ]
       : []),
     { label: user ? "LogOut" : "Login", key: "/" },
   ];
@@ -79,7 +89,7 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        navigate("/");// Sign-out successful.
+        navigate("/"); // Sign-out successful.
       })
       .catch((error) => {
         // An error happened.
@@ -130,7 +140,6 @@ const Navbar = ({ user, loading, userTipo, childData }) => {
     }
   };
 
-  
   return (
     <div>
       <div

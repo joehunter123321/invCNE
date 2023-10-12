@@ -11,6 +11,7 @@ import {
   message,
   notification,
   Spin,
+  InputNumber,
 } from "antd";
 import ScannerQrBarCode from "./ScannerQrBarCode";
 import {
@@ -23,8 +24,7 @@ import {
 const { Option } = Select;
 import { useUserAuth } from "../../auth/UserAuthContext";
 import CustomForm from "./CustomForm";
-const AddMaletas = ({  loading, userTipo }) => {
- 
+const AddMaletas = ({ loading, userTipo }) => {
   console.log("loading:", loading);
   console.log("userTipo:", userTipo);
   const { user } = useUserAuth(); // Access and use user data as needed
@@ -175,12 +175,12 @@ const AddMaletas = ({  loading, userTipo }) => {
               autoComplete="off"
             >
               <Form.Item
-                label="IDScanner"
+                label="JRV"
                 name="IDScanner"
                 rules={[
                   {
                     required: true,
-                    message: "Por favor Completar IDScanner!",
+                    message: "Por favor Completar JRV!",
                   },
                 ]}
               >
@@ -224,7 +224,7 @@ const AddMaletas = ({  loading, userTipo }) => {
                 </Row>
               </Form.Item>
 
-              <Form.Item label="Lado">
+              <Form.Item label="Torre">
                 <Row gutter={2}>
                   <Col span={12}>
                     <Form.Item
@@ -233,13 +233,13 @@ const AddMaletas = ({  loading, userTipo }) => {
                       rules={[
                         {
                           required: true,
-                          message: "Por favor Completar Lado !",
+                          message: "Por favor Completar Torre !",
                         },
                       ]}
                     >
                       <Select>
-                        <Option value={"A"}>A</Option>
-                        <Option value={"B"}>B</Option>
+                        <Option value={"1"}>1</Option>
+                        <Option value={"2"}>2</Option>
                       </Select>
                     </Form.Item>
                   </Col>
@@ -279,6 +279,12 @@ const AddMaletas = ({  loading, userTipo }) => {
                         <Option value={4}>4</Option>
                         <Option value={5}>5</Option>
                         <Option value={6}>6</Option>
+                        <Option value={7}>7</Option>
+                        <Option value={8}>8</Option>
+                        <Option value={9}>9</Option>
+                        <Option value={10}>10</Option>
+                        <Option value={11}>11</Option>
+                        <Option value={12}>12</Option>
                       </Select>
                     </Form.Item>
                   </Col>
@@ -337,7 +343,7 @@ const AddMaletas = ({  loading, userTipo }) => {
 
               <Form.Item>
                 <Button type="primary" htmlType="submit">
-                  Submit
+                  Guardar
                 </Button>
               </Form.Item>
             </Form>

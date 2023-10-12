@@ -33,6 +33,7 @@ import AddInventario from "./components/Inventario/AddInventario";
 import DynamicFieldsForm from "./components/Inventario/DynamicFieldsForm";
 import CustomForm from "./components/Inventario/CustomForm";
 import MostrarMaletaTotal from "./components/Inventario/MostrarMaletaTotal";
+import Signup from "./components/Login/Signup";
 export const ColorContext = createContext();
 
 const { Header, Content, Footer } = Layout;
@@ -76,12 +77,17 @@ const App = () => {
                 background: colorBgContainer,
               }}
             >
+              
               <Routes>
                 <Route
                   path="/AgregarMaletas"
                   element={
                     <ProtectedRoute>
-                      <AddMaletas user={user} loading={loading} userTipo={userTipo} />
+                      <AddMaletas
+                        user={user}
+                        loading={loading}
+                        userTipo={userTipo}
+                      />
                     </ProtectedRoute>
                   }
                 />
@@ -136,6 +142,16 @@ const App = () => {
                     <div>
                       {" "}
                       <MostrarMaletaTotal />{" "}
+                    </div>
+                  }
+                />
+
+                <Route
+                  path="/Registro"
+                  element={
+                    <div>
+                      {" "}
+                      <Signup />{" "}
                     </div>
                   }
                 />
