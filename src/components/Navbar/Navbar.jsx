@@ -11,7 +11,7 @@ import Logo from "../../assets/images/logo.jpg";
 import { getAuth, signOut } from "firebase/auth";
 import { useLocation } from "react-router-dom";
 const Navbar = ({ user, loading, userTipo, childData }) => {
-  console.log("navbar", loading);
+
 
   const navigate = useNavigate();
   const [current, setCurrent] = useState("");

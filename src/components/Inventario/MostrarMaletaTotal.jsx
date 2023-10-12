@@ -79,7 +79,7 @@ function MostrarMaletaTotal() {
       width: 100,
     },
     {
-      title: "Lado",
+      title: "Torre",
       dataIndex: "Lado",
       key: "Lado",
       sorter: (a, b) => a.Lado.localeCompare(b.Lado),

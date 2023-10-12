@@ -11,7 +11,7 @@ import {
   message,
   notification,
   Spin,
-  InputNumber,
+  Radio,
 } from "antd";
 import ScannerQrBarCode from "./ScannerQrBarCode";
 import {
@@ -22,11 +22,10 @@ import {
   getFirestore,
 } from "firebase/firestore";
 const { Option } = Select;
+
 import { useUserAuth } from "../../auth/UserAuthContext";
 import CustomForm from "./CustomForm";
-const AddMaletas = ({ loading, userTipo }) => {
-  console.log("loading:", loading);
-  console.log("userTipo:", userTipo);
+const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
   const { user } = useUserAuth(); // Access and use user data as needed
   const [api, contextHolder] = notification.useNotification();
   const [form] = Form.useForm();
@@ -35,7 +34,20 @@ const AddMaletas = ({ loading, userTipo }) => {
   const childRef = useRef(null);
   const [Checks, setChecks] = useState({});
   const [DataAlert, setDataAlert] = useState(null);
+  const [gondolasOptions, setGondolasOptions] = useState(ConfiguracionData);
+  // Verificar si ya hay un valor en localStorage, de lo contrario, establecer el valor predeterminado "Campo"
+  const [tipoFormulario, setTipoFormulario] = useState(
+    localStorage.getItem("TipoFormulario") || "Configuracion"
+  );
 
+  const [localTipoFormulario, setLocalTipoFormulario] =
+    useState(tipoFormulario);
+  // Verificar si ya hay un valor en localStorage, de lo contrario, establecer el valor predeterminado "Campo"
+  const tipoFormularioEnLocalStorage = localStorage.getItem("TipoFormulario");
+  if (tipoFormularioEnLocalStorage === null) {
+    localStorage.setItem("TipoFormulario", "Configuracion");
+  }
+  const { LoadTipoFormulario } = useUserAuth();
   const onFinish = async (values, formId, formRef) => {
     setValues(values);
 
@@ -136,10 +148,27 @@ const AddMaletas = ({ loading, userTipo }) => {
     }));
   };
 
-  console.log("loadingAddMaletas:", loading);
+  const onChangeRadio = (e) => {
+    const selectedValue = e.target.value;
+    localStorage.setItem("TipoFormulario", selectedValue);
+    console.log(`radio checked: ${selectedValue}`);
+    LoadTipoFormulario(selectedValue);
+    setLocalTipoFormulario(selectedValue); // Actualiza el estado local
+    window.location.reload();
+  };
 
   return (
     <div style={{ height: "100vh", paddingTop: "5%" }}>
+      <Radio.Group
+        onChange={onChangeRadio}
+        defaultValue={tipoFormulario}
+        style={{
+          marginTop: 16,
+        }}
+      >
+        <Radio.Button value="Configuracion">Campo</Radio.Button>
+        <Radio.Button value="CLE">CLE</Radio.Button>
+      </Radio.Group>
       {loading ? (
         <Spin size="large" />
       ) : (
@@ -180,13 +209,37 @@ const AddMaletas = ({ loading, userTipo }) => {
                 rules={[
                   {
                     required: true,
-                    message: "Por favor Completar JRV!",
+                    message: "Por favor completar JRV",
+                  },
+                  {
+                    type: "number",
+                    min: 10000,
+                    max: 99999,
+                    transform: (value) => parseFloat(value),
+                    message: "Ingrese un número válido con al menos 5 cifras",
+                  },
+                  {
+                    max: 5, // Máximo número de caracteres permitidos
+                    message: "El campo no puede tener más de 5 caracteres",
                   },
                 ]}
               >
                 <Row gutter={2}>
                   <Col span={12}>
-                    <Input value={searchValue} onChange={handleSearchChange} />
+                    <Input
+                      value={searchValue}
+                      onChange={handleSearchChange}
+                      onPressEnter={(e) => {
+                        console.log(e.key);
+                        if (e.key === "Enter") {
+                          const form = e.target.form;
+                          const index = [...form].indexOf(e.target);
+                          console.log(index);
+                          form[index + 1].focus();
+                          e.preventDefault();
+                        }
+                      }}
+                    />
                   </Col>
                   <Col span={12}></Col>
                 </Row>
@@ -205,7 +258,21 @@ const AddMaletas = ({ loading, userTipo }) => {
                         },
                       ]}
                     >
-                      <Input />
+                      <Select>
+                        {ConfiguracionData && ConfiguracionData.Gondola ? (
+                          Object.keys(ConfiguracionData.Gondola).map(
+                            (opcion) => (
+                              <Option key={opcion} value={opcion}>
+                                {ConfiguracionData.Gondola[opcion]}
+                              </Option>
+                            )
+                          )
+                        ) : (
+                          <Option value="" disabled>
+                            Configuración no disponible
+                          </Option>
+                        )}
+                      </Select>
                     </Form.Item>
                   </Col>
                   <Col span={4}>
@@ -238,8 +305,17 @@ const AddMaletas = ({ loading, userTipo }) => {
                       ]}
                     >
                       <Select>
-                        <Option value={"1"}>1</Option>
-                        <Option value={"2"}>2</Option>
+                        {ConfiguracionData && ConfiguracionData.Torre ? (
+                          Object.keys(ConfiguracionData.Torre).map((opcion) => (
+                            <Option key={opcion} value={opcion}>
+                              {ConfiguracionData.Torre[opcion]}
+                            </Option>
+                          ))
+                        ) : (
+                          <Option value="" disabled>
+                            Configuración no disponible
+                          </Option>
+                        )}
                       </Select>
                     </Form.Item>
                   </Col>
@@ -273,18 +349,19 @@ const AddMaletas = ({ loading, userTipo }) => {
                       ]}
                     >
                       <Select>
-                        <Option value={1}>1</Option>
-                        <Option value={2}>2</Option>
-                        <Option value={3}>3</Option>
-                        <Option value={4}>4</Option>
-                        <Option value={5}>5</Option>
-                        <Option value={6}>6</Option>
-                        <Option value={7}>7</Option>
-                        <Option value={8}>8</Option>
-                        <Option value={9}>9</Option>
-                        <Option value={10}>10</Option>
-                        <Option value={11}>11</Option>
-                        <Option value={12}>12</Option>
+                        {ConfiguracionData && ConfiguracionData.Bloque ? (
+                          Object.keys(ConfiguracionData.Bloque).map(
+                            (opcion) => (
+                              <Option key={opcion} value={opcion}>
+                                {ConfiguracionData.Bloque[opcion]}
+                              </Option>
+                            )
+                          )
+                        ) : (
+                          <Option value="" disabled>
+                            Configuración no disponible
+                          </Option>
+                        )}
                       </Select>
                     </Form.Item>
                   </Col>
@@ -318,10 +395,17 @@ const AddMaletas = ({ loading, userTipo }) => {
                       ]}
                     >
                       <Select>
-                        <Option value={1}>1</Option>
-                        <Option value={2}>2</Option>
-                        <Option value={3}>3</Option>
-                        <Option value={4}>4</Option>
+                        {ConfiguracionData && ConfiguracionData.Nivel ? (
+                          Object.keys(ConfiguracionData.Nivel).map((opcion) => (
+                            <Option key={opcion} value={opcion}>
+                              {ConfiguracionData.Nivel[opcion]}
+                            </Option>
+                          ))
+                        ) : (
+                          <Option value="" disabled>
+                            Configuración no disponible
+                          </Option>
+                        )}
                       </Select>
                     </Form.Item>
                   </Col>
