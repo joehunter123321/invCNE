@@ -1,0 +1,30 @@
+
+body {
+  font-size: 16px;
+  line-height: 1.6;
+ 
+  overflow-x: hidden;
+  
+}
+
+.container-fluid {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 15px;
+  
+}
+
+.ant-layout-footer {
+
+  color: #fff !important;
+  padding: 0px 0 !important;
+  text-align: center;
+}
+
+.ant-layout-header{
+
+  color: blue !important;
+  padding: 0px 0 !important;
+  text-align: center;
+}
+ 

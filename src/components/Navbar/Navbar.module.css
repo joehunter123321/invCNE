@@ -1,0 +1,9 @@
+.MenuSt {
+  position: fixed;
+  background-color: royalblue;
+  z-index: 1;
+}
+
+.BadgeSt{
+  padding-left: 14px;
+}
