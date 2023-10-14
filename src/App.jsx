@@ -73,10 +73,7 @@ const App = () => {
               height: "100vh",
             }}
           >
-            <div>
-              {" "}
-              <h1>test</h1>
-            </div>
+           
 
             <div
               style={{

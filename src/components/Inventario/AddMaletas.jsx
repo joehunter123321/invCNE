@@ -11,7 +11,8 @@ import {
   message,
   notification,
   Spin,
-  Radio,
+  TreeSelect,
+  Menu,
 } from "antd";
 import ScannerQrBarCode from "./ScannerQrBarCode";
 import {
@@ -26,7 +27,11 @@ const { Option } = Select;
 import { useUserAuth } from "../../auth/UserAuthContext";
 import CustomForm from "./CustomForm";
 const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
+  const { SubMenu } = Menu;
   const { user } = useUserAuth(); // Access and use user data as needed
+  const [currentLugar, setcurrentLugar] = useState(null);
+  const [DataConfigLugar, setDataConfigLugar] = useState(null);
+
   const [api, contextHolder] = notification.useNotification();
   const [form] = Form.useForm();
   const [valuesChecks, setValues] = useState({});
@@ -39,7 +44,7 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
   const [tipoFormulario, setTipoFormulario] = useState(
     localStorage.getItem("TipoFormulario") || "Configuracion"
   );
-
+  const [selectedData, setSelectedData] = useState(null);
   const [localTipoFormulario, setLocalTipoFormulario] =
     useState(tipoFormulario);
   // Verificar si ya hay un valor en localStorage, de lo contrario, establecer el valor predeterminado "Campo"
@@ -48,6 +53,7 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
     localStorage.setItem("TipoFormulario", "Configuracion");
   }
   const { LoadTipoFormulario } = useUserAuth();
+
   const onFinish = async (values, formId, formRef) => {
     setValues(values);
 
@@ -125,6 +131,7 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
     // Add similar logic for other input fields
   };
 
+  console.log("setDataConfigLugar:", DataConfigLugar);
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
     message.error("No se Guardo!");
@@ -149,14 +156,60 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
     }));
   };
 
-  const onChangeRadio = (e) => {
-    const selectedValue = e.target.value;
-    localStorage.setItem("TipoFormulario", selectedValue);
-    console.log(`radio checked: ${selectedValue}`);
-    LoadTipoFormulario(selectedValue);
-    setLocalTipoFormulario(selectedValue); // Actualiza el estado local
-    window.location.reload();
+
+
+  const onClickLugar = async (e) => {
+    try {
+      console.log("Click Lugar", e.key)
+      const db = getFirestore();
+      const docRef = doc(db, "ConfigLugar", e.key);
+      const docSnap = await getDoc(docRef);
+      console.log("222222222,", e.key)
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        setDataConfigLugar(docSnap.data());
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error writing document: ", error);
+    }
   };
+
+
+
+
+  const itemsLugar = [
+    {
+      label: "CAMPO",
+      key: "Campo",
+
+      //disabled: true,
+    },
+    {
+      label: "CLE",
+      key: "SubMenu",
+
+      children: [
+        {
+          type: "group",
+          label: "NAVE",
+          children: [
+            {
+              label: "Nave 1",
+              key: "Nave1",
+            },
+            {
+              label: "Nave 2",
+              key: "Nave2",
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+ 
 
   return (
     <div style={{ height: "100vh", paddingTop: "1%" }}>
@@ -165,19 +218,15 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
       ) : (
         <div>
           {contextHolder}
-          <div style={{ paddingBottom: "2%" }}>
-            {" "}
-            <Radio.Group
-              onChange={onChangeRadio}
-              defaultValue={tipoFormulario}
-              style={{
-                marginTop: 16,
-              }}
-            >
-              <Radio.Button value="Configuracion">Campo</Radio.Button>
-              <Radio.Button value="CLE">CLE</Radio.Button>
-            </Radio.Group>
-          </div>
+          <div style={{ paddingBottom: "2%" }}></div>
+          <Menu
+          
+            onClick={onClickLugar}
+            selectedKeys={[currentLugar]}
+            mode="horizontal"
+            items={itemsLugar}
+          />
+          
           <Card
             hoverable
             title="Formulario Maletas"
@@ -198,6 +247,13 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
             </div>
             <Form
               form={form}
+              disabled={DataConfigLugar && DataConfigLugar.Activo ? (
+                DataConfigLugar.Activo
+                
+              ) : (
+                null
+              )
+            }
               name="basic"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
@@ -217,13 +273,13 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
                   },
                   {
                     type: "number",
-                    min: 1000,
-                    max: 9999,
+                    min: 1,
+                    max: 99999,
                     transform: (value) => parseFloat(value),
                     message: "Ingrese un número válido con al menos 5 cifras",
                   },
                   {
-                    max: 4, // Máximo número de caracteres permitidos
+                    max: 5, // Máximo número de caracteres permitidos
                     message: "El campo no puede tener más de 5 caracteres",
                   },
                 ]}
@@ -263,14 +319,12 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
                       ]}
                     >
                       <Select>
-                        {ConfiguracionData && ConfiguracionData.Gondola ? (
-                          Object.keys(ConfiguracionData.Gondola).map(
-                            (opcion) => (
-                              <Option key={opcion} value={opcion}>
-                                {ConfiguracionData.Gondola[opcion]}
-                              </Option>
-                            )
-                          )
+                        {DataConfigLugar && DataConfigLugar.Gondola ? (
+                          Object.keys(DataConfigLugar.Gondola).map((opcion) => (
+                            <Option key={opcion} value={opcion}>
+                              {DataConfigLugar.Gondola[opcion]}
+                            </Option>
+                          ))
                         ) : (
                           <Option value="" disabled>
                             Configuración no disponible
@@ -309,10 +363,10 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
                       ]}
                     >
                       <Select>
-                        {ConfiguracionData && ConfiguracionData.Torre ? (
-                          Object.keys(ConfiguracionData.Torre).map((opcion) => (
+                        {DataConfigLugar && DataConfigLugar.Torre ? (
+                          Object.keys(DataConfigLugar.Torre).map((opcion) => (
                             <Option key={opcion} value={opcion}>
-                              {ConfiguracionData.Torre[opcion]}
+                              {DataConfigLugar.Torre[opcion]}
                             </Option>
                           ))
                         ) : (
@@ -353,14 +407,12 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
                       ]}
                     >
                       <Select>
-                        {ConfiguracionData && ConfiguracionData.Bloque ? (
-                          Object.keys(ConfiguracionData.Bloque).map(
-                            (opcion) => (
-                              <Option key={opcion} value={opcion}>
-                                {ConfiguracionData.Bloque[opcion]}
-                              </Option>
-                            )
-                          )
+                        {DataConfigLugar && DataConfigLugar.Bloque ? (
+                          Object.keys(DataConfigLugar.Bloque).map((opcion) => (
+                            <Option key={opcion} value={opcion}>
+                              {DataConfigLugar.Bloque[opcion]}
+                            </Option>
+                          ))
                         ) : (
                           <Option value="" disabled>
                             Configuración no disponible
@@ -399,10 +451,10 @@ const AddMaletas = ({ loading, userTipo, ConfiguracionData }) => {
                       ]}
                     >
                       <Select>
-                        {ConfiguracionData && ConfiguracionData.Nivel ? (
-                          Object.keys(ConfiguracionData.Nivel).map((opcion) => (
+                        {DataConfigLugar && DataConfigLugar.Nivel ? (
+                          Object.keys(DataConfigLugar.Nivel).map((opcion) => (
                             <Option key={opcion} value={opcion}>
-                              {ConfiguracionData.Nivel[opcion]}
+                              {DataConfigLugar.Nivel[opcion]}
                             </Option>
                           ))
                         ) : (

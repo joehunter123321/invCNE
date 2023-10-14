@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Table, Input, Space, Button, Spin } from "antd";
+import { Table, Input, Space, Button, Spin, Tag, Alert } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import CsvDownloader from "react-csv-downloader";
+
 function MostrarMaletaTotal() {
   const [dataMaletas, setDataMaletas] = useState([]);
+  const [duplicates, setDuplicates] = useState([]);
+  const [ExistDup, setExistDup] = useState([]);
 
   useEffect(() => {
     const db = getFirestore();
     const unsubscribe = onSnapshot(collection(db, "Gondolas"), (snapshot) => {
       const dataMaletas = [];
-
       snapshot.forEach((doc) => {
         const data = doc.data();
         dataMaletas.push({
@@ -18,7 +20,6 @@ function MostrarMaletaTotal() {
           ...data,
         });
       });
-
       setDataMaletas(dataMaletas);
     });
 
@@ -27,25 +28,53 @@ function MostrarMaletaTotal() {
     };
   }, []);
 
+  useEffect(() => {
+    const newDuplicates = checkDuplicates(dataMaletas);
+    setDuplicates(newDuplicates);
+  }, [dataMaletas]);
 
- 
+  const checkDuplicates = (data) => {
+    if (!Array.isArray(data)) {
+      return [];
+    }
 
-  const checkDuplicate = (record, dataIndex, dataSource) => {
-    const valueToCheck = record[dataIndex];
-    const matchingRows = dataSource.filter((item) => {
-      return (
-        item.Gondola === record.Gondola &&
-        item.Lado === record.Lado &&
-        item.Bloque === record.Bloque &&
-        item.Nivel === record.Nivel
-      );
+    const duplicatesArray = [];
+
+    data.forEach((record) => {
+      const matchingRows = data.filter((item) => {
+        return (
+          item.Gondola === record.Gondola &&
+          item.Lado === record.Lado &&
+          item.Bloque === record.Bloque &&
+          item.Nivel === record.Nivel &&
+          item.id !== record.id
+        );
+      });
+
+      // Agrega el número de ocurrencias al objeto del duplicado si es mayor  a VAR 5  + 1
+      if (matchingRows.length > 5) {
+        const duplicateObject = {
+          ...record,
+          occurrences: matchingRows.length + 1,
+        };
+        duplicatesArray.push(duplicateObject);
+      }
     });
-  
-    // Excluye la fila actual de las duplicadas.
-    const matchingRowsExcludingCurrent = matchingRows.filter((item) => item.id !== record.id);
-  
-    // Marca la fila como roja solo si se encuentra más de dos veces en el conjunto de datos.
-    return matchingRowsExcludingCurrent.length >= 2 ? { background: "red", color: "white" } : {};
+
+    duplicatesArray.sort((a, b) => {
+      if (a.Gondola !== b.Gondola) {
+        return a.Gondola - b.Gondola;
+      }
+      if (a.Lado !== b.Lado) {
+        return a.Lado - b.Lado;
+      }
+      if (a.Bloque !== b.Bloque) {
+        return a.Bloque - b.Bloque;
+      }
+      return a.Nivel - b.Nivel;
+    });
+
+    return duplicatesArray;
   };
 
   const columns = [
@@ -98,9 +127,21 @@ function MostrarMaletaTotal() {
       sorter: (a, b) => a.Gondola - b.Gondola,
       sortDirections: ["ascend", "descend"],
       width: 100,
-      onCell: (record) => ({
-        style: checkDuplicate(record, "Gondola", dataMaletas),
-      }),
+      render: (text, record) => (
+        <span>
+          {checkDuplicates(dataMaletas).some(
+            (d) =>
+              d.Gondola === record.Gondola &&
+              d.Lado === record.Lado &&
+              d.Bloque === record.Bloque &&
+              d.Nivel === record.Nivel
+          ) ? (
+            <Tag color="red">{text}</Tag>
+          ) : (
+            <span>{text}</span>
+          )}
+        </span>
+      ),
     },
     {
       title: "Torre",
@@ -109,9 +150,21 @@ function MostrarMaletaTotal() {
       sorter: (a, b) => a.Lado.localeCompare(b.Lado),
       sortDirections: ["ascend", "descend"],
       width: 100,
-      onCell: (record) => ({
-        style: checkDuplicate(record, "Lado", dataMaletas),
-      }),
+      render: (text, record) => (
+        <span>
+          {checkDuplicates(dataMaletas).some(
+            (d) =>
+              d.Gondola === record.Gondola &&
+              d.Lado === record.Lado &&
+              d.Bloque === record.Bloque &&
+              d.Nivel === record.Nivel
+          ) ? (
+            <Tag color="red">{text}</Tag>
+          ) : (
+            <span>{text}</span>
+          )}
+        </span>
+      ),
     },
     {
       title: "Bloque",
@@ -120,9 +173,21 @@ function MostrarMaletaTotal() {
       sorter: (a, b) => a.Bloque - b.Bloque,
       sortDirections: ["ascend", "descend"],
       width: 100,
-      onCell: (record) => ({
-        style: checkDuplicate(record, "Bloque", dataMaletas),
-      }),
+      render: (text, record) => (
+        <span>
+          {checkDuplicates(dataMaletas).some(
+            (d) =>
+              d.Gondola === record.Gondola &&
+              d.Lado === record.Lado &&
+              d.Bloque === record.Bloque &&
+              d.Nivel === record.Nivel
+          ) ? (
+            <Tag color="red">{text}</Tag>
+          ) : (
+            <span>{text}</span>
+          )}
+        </span>
+      ),
     },
     {
       title: "Nivel",
@@ -131,9 +196,21 @@ function MostrarMaletaTotal() {
       sorter: (a, b) => a.Nivel - b.Nivel,
       sortDirections: ["ascend", "descend"],
       width: 100,
-      onCell: (record) => ({
-        style: checkDuplicate(record, "Nivel", dataMaletas),
-      }),
+      render: (text, record) => (
+        <span>
+          {checkDuplicates(dataMaletas).some(
+            (d) =>
+              d.Gondola === record.Gondola &&
+              d.Lado === record.Lado &&
+              d.Bloque === record.Bloque &&
+              d.Nivel === record.Nivel
+          ) ? (
+            <Tag color="red">{text}</Tag>
+          ) : (
+            <span>{text}</span>
+          )}
+        </span>
+      ),
     },
     {
       title: "InventariadoPorUserIDentidad",
@@ -164,15 +241,24 @@ function MostrarMaletaTotal() {
 
   const Total = dataMaletas.length;
   const Datadown = dataMaletas;
-  console.log("dataMaletas",dataMaletas)
-
-  
+  console.log("duplicates", duplicates.length);
+  console.log("ExistDup", dataMaletas);
   return (
     <div style={{ height: "100vh", paddingTop: "5%" }}>
       {dataMaletas.length > 0 ? (
         <div>
-          {" "}
           <h1>Todas las Maletas {Total}</h1>
+          <div>
+            {duplicates.length > 1 && (
+              <Alert
+                message="Alerta de Duplicados"
+                description="Se han encontrado múltiples duplicados en los datos."
+                type="error"
+                showIcon
+              />
+            )}
+            {/* Resto del código... */}
+          </div>
           <Table
             style={{ padding: "5%" }}
             bordered
@@ -190,6 +276,16 @@ function MostrarMaletaTotal() {
             wrapColumnChar=""
             columns={columns2}
             datas={dataMaletas}
+          >
+            <Button>Download</Button>
+          </CsvDownloader>
+          <CsvDownloader
+            filename="DUP"
+            extension=".csv"
+            separator=";"
+            wrapColumnChar=""
+            columns={columns2}
+            datas={duplicates}
           >
             <Button>Download</Button>
           </CsvDownloader>
